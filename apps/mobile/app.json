@@ -1,0 +1,25 @@
+{
+  "expo": {
+    "name": "Batho Travels",
+    "slug": "batho-travels",
+    "scheme": "bathotravels",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "za.co.bathotravels.app"
+    },
+    "android": {
+      "package": "za.co.bathotravels.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#F8F4ED"
+      }
+    },
+    "plugins": ["expo-router", "expo-secure-store", "expo-local-authentication"],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
+

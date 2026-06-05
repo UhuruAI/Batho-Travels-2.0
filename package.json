@@ -1,0 +1,30 @@
+{
+  "name": "batho-travels",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@9.15.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev --parallel",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck",
+    "phase12:check": "node scripts/phase12-checks.mjs",
+    "phase12:check:mobile-export": "node scripts/phase12-checks.mjs --mobile-export",
+    "phase12:check:vitest": "node scripts/phase12-checks.mjs --vitest",
+    "convex:dev": "convex dev",
+    "clean": "turbo run clean && rimraf node_modules"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.10",
+    "convex": "^1.17.4",
+    "rimraf": "^6.0.1",
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

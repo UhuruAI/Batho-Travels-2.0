@@ -1,0 +1,43 @@
+{
+  "name": "Batho Travels",
+  "url": "https://bathotravels.co.za",
+  "locale": "en-ZA",
+  "currency": "ZAR",
+  "tagline": "Travel the World. Pay Over Time. Zero Debt.",
+  "market": "South Africa",
+  "category": "Travel-planning and structured-savings platform",
+  "primaryProduct": "AI Trip Planner",
+  "positioning": [
+    "0% interest",
+    "no credit checks",
+    "no loans",
+    "no debt",
+    "not a lender"
+  ],
+  "v1Scope": [
+    "user-driven AI trip planning",
+    "structured monthly savings",
+    "sequential staged funding",
+    "group trip coordination",
+    "custom destination requests",
+    "supportive reminders",
+    "admin review workflows"
+  ],
+  "fundingOrder": ["flights", "stay", "experiences"],
+  "planLimits": {
+    "defaultMonths": 12,
+    "maxMonths": 12,
+    "minimumMonths": {
+      "domestic": 3,
+      "africaRegional": 6,
+      "longHaulInternational": 12
+    }
+  },
+  "supportPolicy": {
+    "gracePeriodDays": 7,
+    "lateFees": false,
+    "options": ["grace", "pause", "adjust", "cancel"]
+  },
+  "paymentCopy": "trusted providers, including card and EFT options",
+  "approvedReservationCopy": ["Reserve your spot", "Secure your travel plan early"]
+}

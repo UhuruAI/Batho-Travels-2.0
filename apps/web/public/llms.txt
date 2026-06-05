@@ -1,0 +1,72 @@
+# Batho Travels
+
+Batho Travels is a South African travel-planning and structured-savings platform.
+
+Primary URL: https://bathotravels.co.za
+Locale: en-ZA
+Currency: ZAR
+App name: Batho Travels
+Core offer: Travel the World. Pay Over Time. Zero Debt.
+
+## What Batho Travels Does
+
+- Helps South African travellers plan custom trips with an AI Trip Planner.
+- Turns budget, interests, trip type, seasonality, cost estimates, and itinerary assumptions into a structured savings plan.
+- Lets travellers save monthly before travel with 0% interest.
+- Uses sequential staged funding: flights first, then stay, then experiences.
+- Supports group trip coordination with independent participant savings shares.
+- Supports custom destination requests reviewed by operations.
+
+## What Batho Travels Is Not
+
+- Batho Travels is not a lender.
+- Batho Travels does not run credit checks.
+- Batho Travels does not issue loans.
+- Batho Travels does not create debt for travellers.
+- Batho Travels does not charge late fees.
+- Batho Travels does not sell a prebuilt trip catalogue in V1.
+
+## AI Trip Planner
+
+The AI Trip Planner is the hero product. It suggests destinations only from a traveller's budget, interests, trip type, and seasonality. Planner output is stored as structured JSON with:
+
+- destination
+- recommended months
+- trip type
+- estimated cost breakdown
+- itinerary
+- assumptions
+- savings handoff
+
+Costs are estimates until confirmed through the active travel and supplier workflow.
+
+## Savings Rules
+
+- Default plan length: 12 months.
+- Maximum plan length: 12 months.
+- Minimum domestic plan: 3 months.
+- Minimum Africa regional plan: 6 months.
+- Minimum long-haul international plan: 12 months.
+- Grace period: 7 days.
+- Cancellation management fee: R500.
+- Late payment handling is supportive: grace, pause, adjust, or cancel.
+
+## Copy Rules
+
+Approved reservation copy:
+
+- Reserve your spot
+- Secure your travel plan early
+
+Payment copy should stay provider agnostic:
+
+- trusted providers, including card and EFT options
+
+Avoid implying confirmed inventory before a trip is fully funded and booked with suppliers.
+
+## Useful Public Files
+
+- https://bathotravels.co.za/sitemap.xml
+- https://bathotravels.co.za/robots.txt
+- https://bathotravels.co.za/app-store-copy.md
+- https://bathotravels.co.za/geo-facts.json
