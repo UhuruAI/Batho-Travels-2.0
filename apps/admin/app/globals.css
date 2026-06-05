@@ -69,7 +69,20 @@ nav a {
   font-weight: 800;
 }
 
-nav a:first-child {
+nav a.active-tab {
+  background: var(--accent);
+  color: #fffdf8;
+}
+
+nav a:hover,
+nav a:focus-visible {
+  background: var(--canvas);
+  color: var(--text);
+  outline: none;
+}
+
+nav a.active-tab:hover,
+nav a.active-tab:focus-visible {
   background: var(--accent);
   color: #fffdf8;
 }
@@ -175,6 +188,14 @@ article h3 {
   gap: 0;
 }
 
+.workspace-grid.single {
+  grid-template-columns: 1fr;
+}
+
+.workspace-grid.three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .workspace-grid > .panel {
   border: 0;
   border-radius: 0;
@@ -182,6 +203,10 @@ article h3 {
 }
 
 .workspace-grid > .panel:last-child {
+  border-right: 0;
+}
+
+.workspace-grid.single > .panel {
   border-right: 0;
 }
 
@@ -413,7 +438,8 @@ button {
   .role-summary,
   .workspace,
   .support-grid,
-  .workspace-grid {
+  .workspace-grid,
+  .workspace-grid.three {
     grid-template-columns: 1fr;
   }
 
