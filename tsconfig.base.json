@@ -21,7 +21,8 @@
       "@batho/core": ["packages/core/src/index.ts"],
       "@batho/design-tokens": ["packages/design-tokens/src/index.ts"],
       "@batho/payments": ["packages/payments/src/index.ts"],
-      "@batho/ui": ["packages/ui/src/index.ts"]
+      "@batho/ui": ["packages/ui/src/index.ts"],
+      "@batho/ui/native": ["packages/ui/src/native/index.ts"]
     }
   }
 }

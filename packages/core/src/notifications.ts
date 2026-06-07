@@ -1,6 +1,6 @@
 import { GRACE_PERIOD_DAYS, NOTIFICATION_CHANNELS } from "@batho/config";
 import type { NotificationChannel } from "@batho/config";
-import type { TripStatus } from "./trips.js";
+import type { TripStatus } from "./trips";
 
 export type ContributionTiming = "paid" | "upcoming" | "dueSoon" | "inGrace" | "supportReview";
 export type TripSupportAction = "pause" | "adjust" | "cancel";

@@ -6,7 +6,7 @@ import {
   type FundingStage,
   type PlannerResult,
   type SavingsScheduleMonth
-} from "./index.js";
+} from "./index";
 
 export type TripStatus = "planning" | "active" | "paused" | "fullyFunded" | "booked" | "cancelled";
 export type TripPaymentStatus = "pending" | "succeeded" | "failed" | "refunded";
@@ -90,7 +90,7 @@ export function createTripFromPlannerResult(
     destinationCountry: plannerResult.destination.country,
     destinationRegion: plannerResult.destination.region,
     tripType: plannerResult.tripType,
-    status: "active",
+    status: "planning",
     departureDate: options.departureDate,
     totalEstimateCents: plannerResult.estimatedCost.totalCents,
     monthlyContributionCents: savingsPlan.monthlyContributionCents,

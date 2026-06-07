@@ -5,21 +5,47 @@
     "scheme": "bathotravels",
     "version": "0.1.0",
     "orientation": "portrait",
+    "icon": "./assets/batho-logo.png",
     "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/batho-logo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#F8F4ED"
+    },
     "ios": {
+      "icon": "./assets/batho-logo.png",
       "supportsTablet": true,
       "bundleIdentifier": "za.co.bathotravels.app"
     },
     "android": {
       "package": "za.co.bathotravels.app",
       "adaptiveIcon": {
+        "foregroundImage": "./assets/batho-logo.png",
         "backgroundColor": "#F8F4ED"
-      }
+      },
+      "permissions": [
+        "android.permission.USE_BIOMETRIC",
+        "android.permission.USE_FINGERPRINT"
+      ]
     },
-    "plugins": ["expo-router", "expo-secure-store", "expo-local-authentication"],
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "expo-local-authentication",
+      "expo-font",
+      "expo-asset"
+    ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "f9a4cf3b-97b5-453a-85db-a99818ce97d4"
+      }
+    },
+    "owner": "uhuruafri"
   }
 }
-

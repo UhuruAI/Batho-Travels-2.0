@@ -1,7 +1,8 @@
-import { action, internalMutation, type MutationCtx } from "./_generated/server";
+import { action, internalMutation, internalQuery, type MutationCtx } from "./_generated/server";
 import { internal } from "./_generated/api";
 import type { Id } from "./_generated/dataModel";
 import { v } from "convex/values";
+import { assertKycAllowsPayment } from "../packages/core/src/index";
 import {
   assertNoRawFinancialData,
   createOzowProvider,
@@ -10,13 +11,14 @@ import {
   type PaymentProvider,
   type PaymentProviderId
 } from "../packages/payments/src/index";
+import { requireAuthenticatedUser } from "./sessionAuth";
 
 const paymentProvider = v.union(v.literal("paystack"), v.literal("stripe"), v.literal("ozow"));
 const paymentMethod = v.union(v.literal("card"), v.literal("eft"));
 
 export const createTripPaymentIntent = action({
   args: {
-    userId: v.id("users"),
+    sessionToken: v.string(),
     tripId: v.id("trips"),
     provider: paymentProvider,
     amountCents: v.number(),
@@ -36,19 +38,31 @@ export const createTripPaymentIntent = action({
   }> => {
     assertNoRawFinancialData(args as unknown as Record<string, unknown>);
 
+    const context = await ctx.runQuery(internal.payments.internalGetPaymentIntentContext, {
+      sessionToken: args.sessionToken,
+      tripId: args.tripId
+    });
+    if (!context) {
+      throw new Error("Trip not found.");
+    }
+    if (context.trip.status === "planning") {
+      throw new Error("Review and confirm this trip before payment can start.");
+    }
+    assertKycAllowsPayment(context.user.kycTier, context.trip.totalEstimateCents);
+
     const provider = createProviderFromEnv(args.provider);
     const intent = await provider.createIntent({
       amountCents: args.amountCents,
       currency: "ZAR",
-      userId: args.userId,
+      userId: context.user._id,
       tripId: args.tripId,
       paymentMethod: args.paymentMethod,
       returnUrl: args.returnUrl,
-      customerEmail: args.customerEmail
+      customerEmail: args.customerEmail ?? context.user.email
     });
 
     const paymentId: unknown = await ctx.runMutation(internal.payments.internalCreatePendingPayment, {
-      userId: args.userId,
+      userId: context.user._id,
       tripId: args.tripId,
       provider: args.provider,
       providerReference: intent.reference,
@@ -60,6 +74,22 @@ export const createTripPaymentIntent = action({
       paymentId,
       ...intent
     };
+  }
+});
+
+export const internalGetPaymentIntentContext = internalQuery({
+  args: {
+    sessionToken: v.string(),
+    tripId: v.id("trips")
+  },
+  handler: async (ctx, args) => {
+    const { user } = await requireAuthenticatedUser(ctx, args.sessionToken);
+    const trip = await ctx.db.get(args.tripId);
+    if (!trip || trip.userId !== user._id) {
+      return null;
+    }
+
+    return { user, trip };
   }
 });
 

@@ -5,19 +5,21 @@ import {
   validateKycSubmission,
   type KycDocumentKind
 } from "../packages/core/src/index";
+import { requireAuthenticatedUser } from "./sessionAuth";
 
 const requestedTier = v.union(v.literal("standard"), v.literal("enhanced"));
 const reviewDecision = v.union(v.literal("approved"), v.literal("rejected"));
 
 export const createKycSubmission = mutation({
   args: {
-    userId: v.id("users"),
+    sessionToken: v.string(),
     requestedTier,
     identityDocumentStorageId: v.optional(v.string()),
     proofOfAddressStorageId: v.optional(v.string()),
     selfieStorageId: v.optional(v.string())
   },
   handler: async (ctx, args) => {
+    const { user } = await requireAuthenticatedUser(ctx, args.sessionToken);
     const validation = validateKycSubmission({
       requestedTier: args.requestedTier,
       documentStorageIds: documentMapFromStorageIds(args)
@@ -29,7 +31,7 @@ export const createKycSubmission = mutation({
 
     const now = Date.now();
     const submissionId = await ctx.db.insert("kycSubmissions", {
-      userId: args.userId,
+      userId: user._id,
       requestedTier: args.requestedTier,
       status: "pending",
       identityDocumentStorageId: args.identityDocumentStorageId,
@@ -42,7 +44,7 @@ export const createKycSubmission = mutation({
     });
 
     await ctx.db.insert("auditLogs", {
-      actorUserId: args.userId,
+      actorUserId: user._id,
       action: "kyc.submission.created",
       entityType: "kycSubmission",
       entityId: submissionId,
@@ -58,13 +60,32 @@ export const createKycSubmission = mutation({
 
 export const listUserKycSubmissions = query({
   args: {
-    userId: v.id("users")
+    sessionToken: v.string()
   },
   handler: async (ctx, args) => {
+    const { user } = await requireAuthenticatedUser(ctx, args.sessionToken);
     return ctx.db
       .query("kycSubmissions")
-      .withIndex("by_user", (queryBuilder) => queryBuilder.eq("userId", args.userId))
+      .withIndex("by_user", (queryBuilder) => queryBuilder.eq("userId", user._id))
       .collect();
+  }
+});
+
+export const getCurrentUserVerification = query({
+  args: {
+    sessionToken: v.string()
+  },
+  handler: async (ctx, args) => {
+    const { user } = await requireAuthenticatedUser(ctx, args.sessionToken);
+    const submissions = await ctx.db
+      .query("kycSubmissions")
+      .withIndex("by_user", (queryBuilder) => queryBuilder.eq("userId", user._id))
+      .collect();
+
+    return {
+      kycTier: user.kycTier,
+      submissions: submissions.sort((a, b) => b.createdAt - a.createdAt)
+    };
   }
 });
 

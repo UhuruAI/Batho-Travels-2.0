@@ -1,3 +1,5 @@
+"use client";
+
 import {
   buildAdminQueueSummary,
   filterAdminWorkspacesForRoles,
@@ -10,6 +12,11 @@ import {
   type KycReviewTier
 } from "@batho/core";
 import type { ReactNode } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { Badge, Button, Stat, Table, ThemeToggle } from "@batho/ui";
+import { ConvexStatus } from "./ConvexStatus";
+import { useAdminAuth } from "./useAdminAuth";
 
 type AdminTabKey = "overview" | "operations" | "finance" | "support" | "kyc" | "users" | "audit";
 type TripSupportAction = "pause" | "adjust" | "cancel";
@@ -42,24 +49,8 @@ const overviewQueues = [
 ];
 
 const trips = [
-  {
-    id: "TRIP-204",
-    traveller: "Amina D.",
-    destination: "Cape Town",
-    status: "active",
-    savedCents: 920_000,
-    totalCents: 2_500_000,
-    stage: "Flights"
-  },
-  {
-    id: "TRIP-203",
-    traveller: "Neo M.",
-    destination: "Durban",
-    status: "paused",
-    savedCents: 185_000,
-    totalCents: 1_200_000,
-    stage: "Stay"
-  }
+  { id: "TRIP-204", traveller: "Amina D.", destination: "Cape Town", status: "active", savedCents: 920_000, totalCents: 2_500_000, stage: "Flights" },
+  { id: "TRIP-203", traveller: "Neo M.", destination: "Durban", status: "paused", savedCents: 185_000, totalCents: 1_200_000, stage: "Stay" }
 ];
 
 const financeRows = [
@@ -76,67 +67,18 @@ const submissions: Array<{
   status: "pending" | "rejected";
   severity: AdminQueueSeverity;
 }> = [
-  {
-    id: "KYC-1042",
-    traveller: "Amina D.",
-    requestedTier: "enhanced",
-    amountCents: 8_400_000,
-    documents: ["identityDocument", "proofOfAddress", "selfie"],
-    status: "pending",
-    severity: "normal"
-  },
-  {
-    id: "KYC-1041",
-    traveller: "Mpho R.",
-    requestedTier: "standard",
-    amountCents: 3_200_000,
-    documents: ["identityDocument"],
-    status: "pending",
-    severity: "urgent"
-  }
+  { id: "KYC-1042", traveller: "Amina D.", requestedTier: "enhanced", amountCents: 8_400_000, documents: ["identityDocument", "proofOfAddress", "selfie"], status: "pending", severity: "normal" },
+  { id: "KYC-1041", traveller: "Mpho R.", requestedTier: "standard", amountCents: 3_200_000, documents: ["identityDocument"], status: "pending", severity: "urgent" }
 ];
 
-const supportCases: Array<{
-  id: string;
-  traveller: string;
-  destination: string;
-  action: TripSupportAction;
-  amountCents: number;
-  age: string;
-}> = [
-  {
-    id: "SUP-221",
-    traveller: "Neo M.",
-    destination: "Durban",
-    action: "adjust",
-    amountCents: 185_000,
-    age: "Grace window ended today"
-  },
-  {
-    id: "SUP-219",
-    traveller: "Kabelo S.",
-    destination: "Zanzibar",
-    action: "pause",
-    amountCents: 420_000,
-    age: "Requested yesterday"
-  }
+const supportCases: Array<{ id: string; traveller: string; destination: string; action: TripSupportAction; amountCents: number; age: string; }> = [
+  { id: "SUP-221", traveller: "Neo M.", destination: "Durban", action: "adjust", amountCents: 185_000, age: "Grace window ended today" },
+  { id: "SUP-219", traveller: "Kabelo S.", destination: "Zanzibar", action: "pause", amountCents: 420_000, age: "Requested yesterday" }
 ];
 
 const destinationRequests = [
-  {
-    id: "DEST-88",
-    traveller: "Amina D.",
-    destinationName: "Essaouira",
-    country: "Morocco",
-    notes: "Beach, food, calmer shoulder-season pace, and a realistic long-haul savings plan."
-  },
-  {
-    id: "DEST-87",
-    traveller: "Neo M.",
-    destinationName: "Lamu",
-    country: "Kenya",
-    notes: "Culture, coast, and a small-group trip outside peak season."
-  }
+  { id: "DEST-88", traveller: "Amina D.", destinationName: "Essaouira", country: "Morocco", notes: "Beach, food, calmer shoulder-season pace, and a realistic long-haul savings plan." },
+  { id: "DEST-87", traveller: "Neo M.", destinationName: "Lamu", country: "Kenya", notes: "Culture, coast, and a small-group trip outside peak season." }
 ];
 
 const users = [
@@ -163,130 +105,169 @@ const supportActionTitles: Record<TripSupportAction, string> = {
 };
 
 const pageCopy: Record<AdminTabKey, { eyebrow: string; title: string; copy: string }> = {
-  overview: {
-    eyebrow: "Command centre",
-    title: "Today's work",
-    copy: "Role-separated queues for travel plans, verification, refunds, custom destinations, users, and audit history."
-  },
-  operations: {
-    eyebrow: "Operations",
-    title: "Destination and trip operations",
-    copy: "Review live plans, destination requests, staged funding readiness, and travel operations work."
-  },
-  finance: {
-    eyebrow: "Finance",
-    title: "Payments and refunds",
-    copy: "Monitor provider references, payment status, refund checks, and receipt review without storing raw payment data."
-  },
-  support: {
-    eyebrow: "Support",
-    title: "Traveller support",
-    copy: "Handle grace, pause, adjust, and cancel requests with calm, supportive workflows."
-  },
-  kyc: {
-    eyebrow: "KYC",
-    title: "Verification reviews",
-    copy: "Review Standard and Enhanced verification submissions before higher-value booking activity."
-  },
-  users: {
-    eyebrow: "Users",
-    title: "Traveller records",
-    copy: "Scan traveller profiles, verification tiers, trip counts, and support readiness."
-  },
-  audit: {
-    eyebrow: "Audit",
-    title: "Traceable decisions",
-    copy: "Review admin activity across support, finance, operations, KYC, and custom destination decisions."
-  }
+  overview: { eyebrow: "Command centre", title: "Today's work", copy: "Role-separated queues for travel plans, verification, refunds, custom destinations, users, and audit history." },
+  operations: { eyebrow: "Operations", title: "Destination and trip operations", copy: "Review live plans, destination requests, staged funding readiness, and travel operations work." },
+  finance: { eyebrow: "Finance", title: "Payments and refunds", copy: "Monitor provider references, payment status, refund checks, and receipt review without storing raw payment data." },
+  support: { eyebrow: "Support", title: "Traveller support", copy: "Handle grace, pause, adjust, and cancel requests with calm, supportive workflows." },
+  kyc: { eyebrow: "KYC", title: "Verification reviews", copy: "Review Standard and Enhanced verification submissions before higher-value booking activity." },
+  users: { eyebrow: "Users", title: "Traveller records", copy: "Scan traveller profiles, verification tiers, trip counts, and support readiness." },
+  audit: { eyebrow: "Audit", title: "Traceable decisions", copy: "Review admin activity across support, finance, operations, KYC, and custom destination decisions." }
 };
 
 export function AdminDashboard({ activeTab }: { activeTab: AdminTabKey }) {
   const header = pageCopy[activeTab];
+  const auth = useAdminAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (auth.status === "unauthed") {
+      router.replace("/login");
+    }
+  }, [auth.status, router]);
+
+  // Only block render when the session is conclusively invalid — that's the
+  // moment we're navigating away. For `loading` (e.g. brief hydration window
+  // on tab nav) we render the shell so navigation feels instant.
+  if (auth.status === "unauthed") {
+    return null;
+  }
+
+  const initials = auth.email
+    ? auth.email
+        .split("@")[0]!
+        .split(/[._-]/)
+        .map((part) => part.charAt(0))
+        .filter(Boolean)
+        .slice(0, 2)
+        .join("")
+        .toUpperCase() || "AD"
+    : "AD";
 
   return (
-    <main className="shell">
-      <aside>
-        <p className="eyebrow">Batho Travels</p>
-        <h1>Admin</h1>
-        <nav aria-label="Admin tabs">
+    <div className="admin-shell">
+      <aside className="admin-sidebar" aria-label="Admin navigation">
+        <a href="/" className="admin-sidebar__brand">
+          <span className="admin-sidebar__mark">B</span>
+          <span className="admin-sidebar__brand-text">
+            <small>Batho Travels</small>
+            <strong>Admin</strong>
+          </span>
+        </a>
+        <nav className="admin-sidebar__nav" aria-label="Admin tabs">
           {adminTabs.map((tab) => (
             <a
               key={tab.key}
               aria-current={tab.key === activeTab ? "page" : undefined}
-              className={tab.key === activeTab ? "active-tab" : undefined}
               href={tab.href}
             >
               {tab.label}
             </a>
           ))}
         </nav>
+        <div className="admin-sidebar__footer">
+          Roles active: {activeRoles.map(capitalize).join(" · ")}
+        </div>
       </aside>
 
-      <section>
-        <div className="header">
-          <div>
-            <p className="eyebrow">{header.eyebrow}</p>
-            <h2>{header.title}</h2>
+      <main className="admin-main">
+        <header className="admin-topbar">
+          <div className="admin-search">
+            <span aria-hidden="true">⌕</span>
+            <input type="search" placeholder="Search trips, users, KYC, audit…" aria-label="Search admin records" />
+            <kbd>⌘K</kbd>
           </div>
-          <p className="copy">{header.copy}</p>
-        </div>
+          <div className="admin-topbar__actions">
+            <ConvexStatus />
+            <ThemeToggle />
+            <Button variant="secondary" size="sm" onClick={() => void auth.signOut()}>
+              Sign out
+            </Button>
+            <span className="admin-avatar" title={auth.email ?? undefined} aria-label={auth.email ? `Signed in as ${auth.email}` : "Admin user"}>
+              {initials}
+            </span>
+          </div>
+        </header>
 
-        {activeTab === "overview" ? <OverviewTab /> : null}
-        {activeTab === "operations" ? <OperationsTab /> : null}
-        {activeTab === "finance" ? <FinanceTab /> : null}
-        {activeTab === "support" ? <SupportTab /> : null}
-        {activeTab === "kyc" ? <KycTab /> : null}
-        {activeTab === "users" ? <UsersTab /> : null}
-        {activeTab === "audit" ? <AuditTab /> : null}
-      </section>
-    </main>
+        <div className="admin-content">
+          <div className="admin-page-header">
+            <div>
+              <p className="admin-page-header__eyebrow">{header.eyebrow}</p>
+              <h1 className="admin-page-header__title">{header.title}</h1>
+            </div>
+            <p className="admin-page-header__copy">{header.copy}</p>
+          </div>
+
+          <nav className="admin-tabs" aria-label="Section tabs">
+            {adminTabs.map((tab) => (
+              <a key={tab.key} href={tab.href} aria-current={tab.key === activeTab ? "page" : undefined}>
+                {tab.label}
+              </a>
+            ))}
+          </nav>
+
+          {activeTab === "overview" ? <OverviewTab /> : null}
+          {activeTab === "operations" ? <OperationsTab /> : null}
+          {activeTab === "finance" ? <FinanceTab /> : null}
+          {activeTab === "support" ? <SupportTab /> : null}
+          {activeTab === "kyc" ? <KycTab /> : null}
+          {activeTab === "users" ? <UsersTab /> : null}
+          {activeTab === "audit" ? <AuditTab /> : null}
+        </div>
+      </main>
+    </div>
   );
 }
 
 function OverviewTab() {
   return (
     <>
-      <div className="role-summary" aria-label="Queue summary by role">
+      <div className="admin-grid-3" aria-label="Queue summary by role">
         {activeRoles.map((role) => (
-          <article key={role}>
-            <p>{capitalize(role)}</p>
-            <strong>{queueSummary[role].total}</strong>
-            <h3>
-              {queueSummary[role].urgent} urgent, {queueSummary[role].attention} need care
-            </h3>
-          </article>
+          <Stat
+            key={role}
+            label={capitalize(role)}
+            value={queueSummary[role].total}
+            delta={`${queueSummary[role].urgent} urgent · ${queueSummary[role].attention} attention`}
+          />
         ))}
       </div>
 
-      <div className="grid" aria-label="Admin queue summary">
+      <h2 className="admin-section-title">Open queues</h2>
+      <div className="admin-grid-4" aria-label="Admin queue summary">
         {overviewQueues.map((queue) => (
-          <article key={queue.label} className={queue.severity === "urgent" ? "active-card" : undefined}>
-            <p>{queue.role}</p>
-            <strong>{queue.count}</strong>
-            <h3>{queue.label}</h3>
-            <span className={queue.severity === "urgent" ? "risk-pill" : "soft-pill"}>
+          <article
+            key={queue.label}
+            className={`admin-queue-tile${queue.severity === "urgent" ? " admin-queue-tile--urgent" : ""}`}
+          >
+            <p className="admin-queue-tile__role">{queue.role}</p>
+            <p className="admin-queue-tile__count">{queue.count}</p>
+            <p className="admin-queue-tile__label">{queue.label}</p>
+            <span className={`admin-queue-tile__status admin-queue-tile__status--${queue.severity}`}>
+              <span className="admin-queue-tile__dot" aria-hidden="true" />
               {getAdminRiskLabel(queue.severity)}
             </span>
           </article>
         ))}
       </div>
 
-      <div className="workspace-section">
-        <div className="panel-heading support-heading">
-          <div>
-            <p className="eyebrow">Available workspaces</p>
-            <h3>Role access</h3>
-          </div>
-        </div>
-        <div className="workspace-grid three">
-          {workspaces.map((workspace) => (
-            <QueuePanel key={workspace.key} title={workspace.label} pill="Enabled">
-              <p className="muted">
-                Available to {workspace.roles.map((role) => capitalize(role)).join(", ")}.
-              </p>
-            </QueuePanel>
-          ))}
-        </div>
+      <h2 className="admin-section-title">Workspace access</h2>
+      <div className="admin-grid-3">
+        {workspaces.map((workspace) => (
+          <article key={workspace.key} className="admin-workspace-card">
+            <header className="admin-workspace-card__head">
+              <h3 className="admin-workspace-card__title">{workspace.label}</h3>
+              <Badge tone="success">Enabled</Badge>
+            </header>
+            <p className="admin-workspace-card__copy">
+              Available to {workspace.roles.map(capitalize).join(", ")}.
+            </p>
+            <div className="admin-workspace-card__roles">
+              {workspace.roles.map((role) => (
+                <Badge key={role} tone="outline">{capitalize(role)}</Badge>
+              ))}
+            </div>
+          </article>
+        ))}
       </div>
     </>
   );
@@ -294,72 +275,82 @@ function OverviewTab() {
 
 function OperationsTab() {
   return (
-    <WorkspaceSection>
-      <QueuePanel title="Trip oversight" pill="Live plans">
+    <div className="admin-grid-2">
+      <Panel title="Trip oversight" pill="Live plans">
         {trips.map((trip) => (
-          <DataRow key={trip.id} kicker={trip.id} title={`${trip.destination} for ${trip.traveller}`} meta={`${trip.stage} stage, ${trip.status}`}>
+          <DataRow key={trip.id} kicker={trip.id} title={`${trip.destination} for ${trip.traveller}`} meta={`${trip.stage} stage · ${trip.status}`}>
             <Meter value={trip.savedCents} total={trip.totalCents} />
           </DataRow>
         ))}
-      </QueuePanel>
-      <QueuePanel title="Custom destination review" pill="Pricing review">
+      </Panel>
+      <Panel title="Custom destination review" pill="Pricing review">
         {destinationRequests.map((request) => (
-          <DataRow key={request.id} kicker={request.id} title={request.destinationName} meta={`${request.country} requested by ${request.traveller}`}>
-            <p className="muted">{request.notes}</p>
+          <DataRow key={request.id} kicker={request.id} title={request.destinationName} meta={`${request.country} · requested by ${request.traveller}`}>
+            <p className="admin-row__meta">{request.notes}</p>
             <ActionRow primary="Approve for planner" secondary="Request more detail" />
           </DataRow>
         ))}
-      </QueuePanel>
-    </WorkspaceSection>
+      </Panel>
+    </div>
   );
 }
 
 function FinanceTab() {
   return (
-    <WorkspaceSection>
-      <QueuePanel title="Payment provider queue" pill="References only">
-        {financeRows.map((row) => (
-          <DataRow key={row.id} kicker={row.id} title={`${row.provider} ${row.status}`} meta={`${row.trip} ${formatRand(row.amountCents)}`}>
-            <ActionRow primary="Review" secondary="Open receipt" />
-          </DataRow>
-        ))}
-      </QueuePanel>
-      <QueuePanel title="Refund policy checks" pill="R500 fee policy">
-        <p className="muted">
-          Finance reviews cancellation refunds against the published tier table before
-          provider refunds are requested.
-        </p>
-        <ActionRow primary="Open refund queue" secondary="View policy table" />
-      </QueuePanel>
-    </WorkspaceSection>
+    <div className="admin-grid-2">
+      <Panel title="Payment provider queue" pill="References only">
+        <Table>
+          <thead>
+            <tr>
+              <th>Reference</th>
+              <th>Status</th>
+              <th>Trip</th>
+              <th style={{ textAlign: "right" }}>Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            {financeRows.map((row) => (
+              <tr key={row.id}>
+                <td><strong>{row.id}</strong><br /><span style={{ color: "var(--color-text-muted)", fontSize: 12 }}>{row.provider}</span></td>
+                <td><Badge tone={row.status === "Review" ? "warning" : "neutral"}>{row.status}</Badge></td>
+                <td>{row.trip}</td>
+                <td style={{ textAlign: "right", fontVariantNumeric: "tabular-nums" }}>{formatRand(row.amountCents)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </Panel>
+      <Panel title="Refund policy checks" pill="R500 fee policy">
+        <DataRow kicker="Policy" title="Sequential cancellation refunds" meta="Finance reviews cancellation refunds against the published tier table before provider refunds are requested.">
+          <ActionRow primary="Open refund queue" secondary="View policy table" />
+        </DataRow>
+      </Panel>
+    </div>
   );
 }
 
 function SupportTab() {
   return (
-    <WorkspaceSection>
-      <QueuePanel title="Pause, adjust, or cancel" pill="No late fees">
+    <div className="admin-grid-2">
+      <Panel title="Pause, adjust, or cancel" pill="No late fees">
         {supportCases.map((supportCase) => (
-          <DataRow key={supportCase.id} kicker={supportCase.id} title={`${supportCase.traveller} ${supportActionTitles[supportCase.action]}`} meta={`${supportCase.destination} contribution ${formatRand(supportCase.amountCents)}`}>
-            <p className="muted">{supportCase.age}</p>
+          <DataRow key={supportCase.id} kicker={supportCase.id} title={`${supportCase.traveller} · ${supportActionTitles[supportCase.action]}`} meta={`${supportCase.destination} contribution ${formatRand(supportCase.amountCents)}`}>
+            <p className="admin-row__meta">{supportCase.age}</p>
             <ActionRow primary="Resolve" secondary="Message traveller" />
           </DataRow>
         ))}
-      </QueuePanel>
-      <QueuePanel title="Support principles" pill="Warm Calm">
-        <p className="muted">
-          Support flows use grace, pause, adjust, and cancel. Admin copy avoids shame,
-          penalty language, and lender-style escalation.
-        </p>
-      </QueuePanel>
-    </WorkspaceSection>
+      </Panel>
+      <Panel title="Support principles" pill="Warm · Calm">
+        <DataRow kicker="Tone" title="Grace, pause, adjust, cancel" meta="Admin copy avoids shame, penalty language, and lender-style escalation. Travellers can pause once per quarter without penalty." />
+      </Panel>
+    </div>
   );
 }
 
 function KycTab() {
   return (
-    <WorkspaceSection>
-      <QueuePanel title="KYC review" pill="Oldest first">
+    <div className="admin-grid-2">
+      <Panel title="KYC review" pill="Oldest first">
         {submissions.map((submission) => {
           const requirements = getKycTierRequirements(submission.requestedTier);
           const missingDocuments = requirements.requiredDocuments.filter(
@@ -367,14 +358,18 @@ function KycTab() {
           );
 
           return (
-            <DataRow key={submission.id} kicker={submission.id} title={submission.traveller} meta={`${requirements.title} for ${formatRand(submission.amountCents)}`}>
-              <ChipRow
-                items={requirements.requiredDocuments.map((documentKind) => ({
-                  label: documentLabels[documentKind],
-                  state: submission.documents.includes(documentKind) ? "ok" : "missing"
-                }))}
-              />
-              <p className="muted">
+            <DataRow key={submission.id} kicker={submission.id} title={submission.traveller} meta={`${requirements.title} · ${formatRand(submission.amountCents)}`}>
+              <div className="admin-chips">
+                {requirements.requiredDocuments.map((documentKind) => (
+                  <Badge
+                    key={documentKind}
+                    tone={submission.documents.includes(documentKind) ? "success" : "warning"}
+                  >
+                    {documentLabels[documentKind]}
+                  </Badge>
+                ))}
+              </div>
+              <p className="admin-row__meta">
                 {missingDocuments.length > 0
                   ? `Missing ${missingDocuments.map((item) => documentLabels[item]).join(", ")}`
                   : getKycStatusCopy(submission.status, submission.requestedTier)}
@@ -383,89 +378,90 @@ function KycTab() {
             </DataRow>
           );
         })}
-      </QueuePanel>
-      <QueuePanel title="Review guardrails" pill="Protective only">
-        <p className="muted">
-          Verification is used to protect travellers and bookings. It is not a credit check
-          and does not create debt.
-        </p>
-      </QueuePanel>
-    </WorkspaceSection>
+      </Panel>
+      <Panel title="Review guardrails" pill="Protective only">
+        <DataRow kicker="Why" title="Protect travellers and bookings" meta="Verification is used to protect travellers and bookings. It is not a credit check and does not create debt." />
+      </Panel>
+    </div>
   );
 }
 
 function UsersTab() {
   return (
-    <WorkspaceSection single>
-      <QueuePanel title="User overview" pill="KYC and trips">
-        {users.map((user) => (
-          <DataRow key={user.id} kicker={user.id} title={user.name} meta={`${user.tier} verification, ${user.trips} trip plans`}>
-            <span className={user.status === "Active" ? "ok-pill" : "risk-pill"}>{user.status}</span>
-          </DataRow>
-        ))}
-      </QueuePanel>
-    </WorkspaceSection>
+    <Panel title="Users" pill="KYC and trips">
+      <Table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Verification</th>
+            <th>Trips</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {users.map((user) => (
+            <tr key={user.id}>
+              <td><strong>{user.id}</strong></td>
+              <td>{user.name}</td>
+              <td>{user.tier}</td>
+              <td style={{ fontVariantNumeric: "tabular-nums" }}>{user.trips}</td>
+              <td><Badge tone={user.status === "Active" ? "success" : "warning"}>{user.status}</Badge></td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    </Panel>
   );
 }
 
 function AuditTab() {
   return (
-    <WorkspaceSection single>
-      <QueuePanel title="Recent audit events" pill="Immutable trail">
-        {auditRows.map((row) => (
-          <DataRow key={row.id} kicker={row.id} title={row.action} meta={`${row.actor} on ${row.entity}`} />
-        ))}
-      </QueuePanel>
-    </WorkspaceSection>
+    <Panel title="Recent audit events" pill="Immutable trail">
+      <Table>
+        <thead>
+          <tr>
+            <th>Event</th>
+            <th>Actor</th>
+            <th>Action</th>
+            <th>Entity</th>
+          </tr>
+        </thead>
+        <tbody>
+          {auditRows.map((row) => (
+            <tr key={row.id}>
+              <td><strong>{row.id}</strong></td>
+              <td>{row.actor}</td>
+              <td style={{ fontFamily: "var(--font-data)", fontSize: 13 }}>{row.action}</td>
+              <td>{row.entity}</td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    </Panel>
   );
 }
 
-function WorkspaceSection({ children, single = false }: { children: ReactNode; single?: boolean }) {
+function Panel({ title, pill, children }: { title: string; pill: string; children: ReactNode }) {
   return (
-    <div className="workspace-section">
-      <div className={single ? "workspace-grid single" : "workspace-grid"}>{children}</div>
-    </div>
-  );
-}
-
-function QueuePanel({
-  title,
-  pill,
-  children
-}: {
-  title: string;
-  pill: string;
-  children: ReactNode;
-}) {
-  return (
-    <div className="panel">
-      <div className="panel-heading">
+    <section className="admin-panel">
+      <header className="admin-panel__head">
         <h3>{title}</h3>
-        <span className="soft-pill">{pill}</span>
-      </div>
-      <div className="review-list">{children}</div>
-    </div>
+        <Badge tone="outline">{pill}</Badge>
+      </header>
+      <div className="admin-panel__body">{children}</div>
+    </section>
   );
 }
 
-function DataRow({
-  kicker,
-  title,
-  meta,
-  children
-}: {
-  kicker: string;
-  title: string;
-  meta: string;
-  children?: ReactNode;
-}) {
+function DataRow({ kicker, title, meta, children }: { kicker: string; title: string; meta: string; children?: ReactNode }) {
   return (
-    <div className="review-row">
-      <div className="review-main">
+    <div className="admin-row">
+      <div className="admin-row__head">
         <div>
-          <p className="row-kicker">{kicker}</p>
-          <h4>{title}</h4>
-          <p className="muted">{meta}</p>
+          <p className="admin-row__kicker">{kicker}</p>
+          <h4 className="admin-row__title">{title}</h4>
+          <p className="admin-row__meta">{meta}</p>
         </div>
       </div>
       {children}
@@ -475,48 +471,27 @@ function DataRow({
 
 function ActionRow({ primary, secondary }: { primary: string; secondary: string }) {
   return (
-    <div className="actions">
-      <button type="button">{primary}</button>
-      <button type="button" className="secondary-button">
-        {secondary}
-      </button>
-    </div>
-  );
-}
-
-function ChipRow({ items }: { items: Array<{ label: string; state: "ok" | "missing" }> }) {
-  return (
-    <div className="document-chips">
-      {items.map((item) => (
-        <span key={item.label} className={item.state === "ok" ? "doc-ok" : "doc-missing"}>
-          {item.label}
-        </span>
-      ))}
+    <div className="admin-actions">
+      <Button size="sm">{primary}</Button>
+      <Button size="sm" variant="secondary">{secondary}</Button>
     </div>
   );
 }
 
 function Meter({ value, total }: { value: number; total: number }) {
   const width = total > 0 ? Math.min(100, Math.round((value / total) * 100)) : 0;
-
   return (
-    <div className="meter-block">
-      <div className="meter-track">
-        <div className="meter-fill" style={{ width: `${width}%` }} />
+    <div className="admin-meter">
+      <div className="admin-meter__track">
+        <div className="admin-meter__fill" style={{ width: `${width}%` }} />
       </div>
-      <p className="muted">
-        {formatRand(value)} saved of {formatRand(total)}
-      </p>
+      <p className="admin-row__meta">{formatRand(value)} saved of {formatRand(total)}</p>
     </div>
   );
 }
 
 function formatRand(amountCents: number): string {
-  return new Intl.NumberFormat("en-ZA", {
-    style: "currency",
-    currency: "ZAR",
-    maximumFractionDigits: 0
-  }).format(amountCents / 100);
+  return new Intl.NumberFormat("en-ZA", { style: "currency", currency: "ZAR", maximumFractionDigits: 0 }).format(amountCents / 100);
 }
 
 function capitalize(value: string): string {

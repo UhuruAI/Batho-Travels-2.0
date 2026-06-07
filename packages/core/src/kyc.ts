@@ -1,3 +1,5 @@
+import { KYC_BOOKING_LIMITS_CENTS } from "@batho/config";
+
 export type KycReviewTier = "basic" | "standard" | "enhanced";
 export type KycDocumentKind = "identityDocument" | "proofOfAddress" | "selfie";
 export type KycSubmissionStatus = "notStarted" | "draft" | "pending" | "approved" | "rejected";
@@ -30,6 +32,12 @@ export type KycReviewInput = {
 export type KycReviewResult = {
   nextTier: KycReviewTier;
   submissionStatus: "approved" | "rejected";
+  message: string;
+};
+
+export type KycPaymentGateResult = {
+  allowed: true;
+  requiredTier: Exclude<KycReviewTier, "basic">;
   message: string;
 };
 
@@ -123,6 +131,32 @@ export function getKycStatusCopy(
   }
 
   return `Start ${label} verification when your travel plan amount needs it.`;
+}
+
+export function requiredKycTierForPaymentAmount(
+  amountCents: number
+): Exclude<KycReviewTier, "basic"> {
+  if (amountCents <= KYC_BOOKING_LIMITS_CENTS.standard) {
+    return "standard";
+  }
+
+  return "enhanced";
+}
+
+export function assertKycAllowsPayment(
+  currentTier: KycReviewTier,
+  amountCents: number
+): KycPaymentGateResult {
+  const requiredTier = requiredKycTierForPaymentAmount(amountCents);
+  if (tierRank(currentTier) < tierRank(requiredTier)) {
+    throw new Error(`${TIER_LABELS[requiredTier]} verification is required before payment can start.`);
+  }
+
+  return {
+    allowed: true,
+    requiredTier,
+    message: `${TIER_LABELS[requiredTier]} verification approved. Payment can start.`
+  };
 }
 
 function highestTier(currentTier: KycReviewTier, requestedTier: KycReviewTier): KycReviewTier {

@@ -5,9 +5,13 @@ import {
   type TripSupportAction
 } from "@batho/core";
 import type { NotificationChannel } from "@batho/config";
-import { colors, radius, spacing } from "@batho/design-tokens";
-import { useMemo, useState } from "react";
+import { radius, spacing } from "@batho/design-tokens";
+import { useNativeTheme } from "@batho/ui/native";
+import { useMutation, useQuery } from "convex/react";
+import { useEffect, useMemo, useState } from "react";
 import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
+import { api } from "../../../../convex/_generated/api";
+import { useAuth } from "../auth/AuthContext";
 
 const channelLabels: Record<NotificationChannel, string> = {
   email: "Email",
@@ -19,8 +23,17 @@ const channelLabels: Record<NotificationChannel, string> = {
 const allChannels: NotificationChannel[] = ["inApp", "push", "email", "whatsapp"];
 
 export function NotificationsScreen() {
+  const { colors: c } = useNativeTheme();
+  const styles = useMemo(() => getStyles(c), [c]);
+  const { sessionToken } = useAuth();
+  const savedPreferences = useQuery(api.notifications.getNotificationPreferences, {
+    sessionToken
+  });
+  const updatePreferences = useMutation(api.notifications.updateNotificationPreferences);
   const [channels, setChannels] = useState<NotificationChannel[]>(["inApp", "push", "email"]);
   const [selectedAction, setSelectedAction] = useState<TripSupportAction | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState<string | null>(null);
   const preferences = useMemo(
     () => validateNotificationPreferences({ channels }),
     [channels]
@@ -33,12 +46,33 @@ export function NotificationsScreen() {
   });
   const supportOptions = getTripSupportOptions("inGrace");
 
+  useEffect(() => {
+    if (savedPreferences) {
+      setChannels(savedPreferences.channels);
+    }
+  }, [savedPreferences]);
+
   function toggleChannel(channel: NotificationChannel) {
+    setSaveMessage(null);
     setChannels((current) =>
       current.includes(channel)
         ? current.filter((item) => item !== channel)
         : [...current, channel]
     );
+  }
+
+  async function savePreferences() {
+    setSaving(true);
+    setSaveMessage(null);
+    try {
+      const result = await updatePreferences({ sessionToken, channels });
+      setChannels(result.channels);
+      setSaveMessage("Reminder preferences saved.");
+    } catch (err) {
+      setSaveMessage(err instanceof Error ? err.message : "Unable to save reminder preferences.");
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -79,6 +113,15 @@ export function NotificationsScreen() {
               );
             })}
           </View>
+          {saveMessage ? <Text style={styles.cardMeta}>{saveMessage}</Text> : null}
+          <Pressable
+            accessibilityRole="button"
+            disabled={!preferences.valid || saving}
+            onPress={savePreferences}
+            style={[styles.saveButton, !preferences.valid || saving ? styles.saveButtonDisabled : null]}
+          >
+            <Text style={styles.saveButtonText}>{saving ? "Saving..." : "Save channels"}</Text>
+          </Pressable>
         </View>
 
         <View style={styles.card}>
@@ -127,10 +170,11 @@ export function NotificationsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+function getStyles(c: import("@batho/ui/native").Palette) {
+  return StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: colors.light.canvas
+    backgroundColor: c.canvas
   },
   container: {
     gap: spacing.lg,
@@ -141,20 +185,20 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.lg
   },
   eyebrow: {
-    color: colors.light.accent,
+    color: c.accent,
     fontSize: 13,
     fontWeight: "700",
     letterSpacing: 0,
     textTransform: "uppercase"
   },
   title: {
-    color: colors.light.textPrimary,
+    color: c.textPrimary,
     fontSize: 34,
     fontWeight: "700",
     lineHeight: 40
   },
   copy: {
-    color: colors.light.textSecondary,
+    color: c.textSecondary,
     fontSize: 16,
     lineHeight: 24
   },
@@ -162,27 +206,27 @@ const styles = StyleSheet.create({
     gap: spacing.md,
     padding: spacing.lg,
     borderRadius: radius.md,
-    backgroundColor: colors.light.surfaceRaised,
-    borderColor: colors.light.borderSoft,
+    backgroundColor: c.surfaceRaised,
+    borderColor: c.borderSoft,
     borderWidth: 1
   },
   cardTitle: {
-    color: colors.light.textPrimary,
+    color: c.textPrimary,
     fontSize: 20,
     fontWeight: "700"
   },
   cardMeta: {
-    color: colors.light.textSecondary,
+    color: c.textSecondary,
     fontSize: 14,
     lineHeight: 20
   },
   readyCopy: {
-    color: colors.light.success,
+    color: c.success,
     fontSize: 14,
     fontWeight: "700"
   },
   warningCopy: {
-    color: colors.light.warning,
+    color: c.warning,
     fontSize: 14,
     fontWeight: "700"
   },
@@ -193,22 +237,22 @@ const styles = StyleSheet.create({
   },
   channelTile: {
     borderRadius: radius.md,
-    borderColor: colors.light.borderStrong,
+    borderColor: c.borderStrong,
     borderWidth: 1,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm
   },
   channelTileSelected: {
-    borderColor: colors.light.accent,
-    backgroundColor: colors.light.accent
+    borderColor: c.accent,
+    backgroundColor: c.accent
   },
   channelText: {
-    color: colors.light.textSecondary,
+    color: c.textSecondary,
     fontSize: 14,
     fontWeight: "700"
   },
   channelTextSelected: {
-    color: colors.light.surfaceRaised
+    color: c.surfaceRaised
   },
   channelRow: {
     flexDirection: "row",
@@ -218,8 +262,8 @@ const styles = StyleSheet.create({
   recommendationPill: {
     overflow: "hidden",
     borderRadius: radius.full,
-    backgroundColor: colors.light.accentSoft,
-    color: colors.light.accentStrong,
+    backgroundColor: c.accentSoft,
+    color: c.accentStrong,
     fontSize: 13,
     fontWeight: "700",
     paddingHorizontal: spacing.md,
@@ -231,13 +275,13 @@ const styles = StyleSheet.create({
   actionCard: {
     gap: spacing.sm,
     borderRadius: radius.sm,
-    borderColor: colors.light.borderSoft,
+    borderColor: c.borderSoft,
     borderWidth: 1,
     padding: spacing.md
   },
   actionCardSelected: {
-    borderColor: colors.light.primary,
-    backgroundColor: colors.light.primarySoft
+    borderColor: c.primary,
+    backgroundColor: c.primarySoft
   },
   actionHeader: {
     alignItems: "center",
@@ -246,16 +290,32 @@ const styles = StyleSheet.create({
     gap: spacing.md
   },
   actionTitle: {
-    color: colors.light.textPrimary,
+    color: c.textPrimary,
     fontSize: 16,
     fontWeight: "700"
   },
   actionState: {
-    color: colors.light.textMuted,
+    color: c.textMuted,
     fontSize: 13,
     fontWeight: "700"
   },
   actionStateSelected: {
-    color: colors.light.primaryStrong
+    color: c.primaryStrong
+  },
+  saveButton: {
+    alignSelf: "flex-start",
+    borderRadius: radius.md,
+    backgroundColor: c.primary,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm
+  },
+  saveButtonDisabled: {
+    opacity: 0.6
+  },
+  saveButtonText: {
+    color: c.surfaceRaised,
+    fontSize: 14,
+    fontWeight: "700"
   }
 });
+}

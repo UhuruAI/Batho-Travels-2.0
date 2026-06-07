@@ -17,7 +17,7 @@ const plannerResult = createDraftPlannerResult({
 });
 
 describe("createTripFromPlannerResult", () => {
-  it("creates an active trip with staged funding and an empty payment history", () => {
+  it("creates an editable planning trip draft with staged funding and an empty payment history", () => {
     const trip = createTripFromPlannerResult(plannerResult, {
       tripId: "trip_123",
       userId: "user_123",
@@ -29,10 +29,10 @@ describe("createTripFromPlannerResult", () => {
       id: "trip_123",
       userId: "user_123",
       destinationName: "Cape Town",
-      status: "active",
+      status: "planning",
       activeFundingStage: "flights",
-      totalEstimateCents: 2_500_000,
-      monthlyContributionCents: 208_334,
+      totalEstimateCents: 2_740_000,
+      monthlyContributionCents: 228_334,
       payments: [],
       receipts: []
     });
@@ -57,38 +57,35 @@ describe("buildTripDashboard", () => {
     expect(buildTripDashboard(trip, new Date("2027-03-01T00:00:00.000Z"))).toEqual({
       tripId: "trip_123",
       destinationName: "Cape Town",
-      status: "active",
+      status: "planning",
       departureDate: "2027-03-20",
       daysUntilDeparture: 19,
       activeFundingStage: "flights",
       amountSavedCents: 0,
-      amountRemainingCents: 2_500_000,
+      amountRemainingCents: 2_740_000,
       nextContribution: {
         month: 1,
-        amountCents: 208_334,
+        amountCents: 228_334,
         status: "upcoming"
       },
       fundingStages: [
         {
           key: "flights",
-          targetCents: 1_200_000,
+          targetCents: 1_270_000,
           fundedCents: 0,
-          status: "active",
-          completedMonth: undefined
+          status: "active"
         },
         {
           key: "stay",
-          targetCents: 850_000,
+          targetCents: 900_000,
           fundedCents: 0,
-          status: "queued",
-          completedMonth: undefined
+          status: "queued"
         },
         {
           key: "experiences",
-          targetCents: 450_000,
+          targetCents: 570_000,
           fundedCents: 0,
-          status: "queued",
-          completedMonth: undefined
+          status: "queued"
         }
       ],
       paymentHistory: [],
@@ -116,25 +113,25 @@ describe("recordTripPayment", () => {
     const dashboard = buildTripDashboard(paidTrip, new Date("2026-07-02T00:00:00.000Z"));
 
     expect(dashboard.amountSavedCents).toBe(300_000);
-    expect(dashboard.amountRemainingCents).toBe(2_200_000);
+    expect(dashboard.amountRemainingCents).toBe(2_440_000);
     expect(dashboard.fundingStages).toEqual([
       {
         key: "flights",
-        targetCents: 1_200_000,
+        targetCents: 1_270_000,
         fundedCents: 300_000,
         status: "active",
         completedMonth: undefined
       },
       {
         key: "stay",
-        targetCents: 850_000,
+        targetCents: 900_000,
         fundedCents: 0,
         status: "queued",
         completedMonth: undefined
       },
       {
         key: "experiences",
-        targetCents: 450_000,
+        targetCents: 570_000,
         fundedCents: 0,
         status: "queued",
         completedMonth: undefined
@@ -150,4 +147,3 @@ describe("recordTripPayment", () => {
     ]);
   });
 });
-

@@ -1,417 +1,152 @@
-# Batho Travels Design System
+# Batho Travels — Design System
 
-## Status
+Terracotta-anchored, Airbnb-flavored. One coherent language across the consumer website (`apps/web`), the admin dashboard (`apps/admin`), and the mobile app (`apps/mobile`).
 
-Status: sign-off required before product coding.
+## Brand story
 
-This document is the visual and UX source of truth for Batho Travels. Every mobile, web, admin, email, and notification surface should follow it unless a change is recorded in `DECISIONS.md`.
+Batho is a Southern African travel brand that pairs an AI Trip Planner with structured monthly savings. The visual identity should feel **warm and grounded** (because the brand is about real people travelling without debt), **premium and calm** (because it handles money), and **specifically Southern African** (the Ndebele triangle motif in the logo is not decoration — it is the brand).
 
-## Product Context
+Reference brief: [Airbnb Open Design](https://getdesign.md/airbnb/design-md) — warm coral accent, photography-driven, rounded UI, generous whitespace, Cereal-style display typography.
 
-Batho Travels helps South Africans plan personal trips with AI guidance, then save their own money over 3 to 12 months to travel debt-free. The product must feel premium, calm, human, financially realistic, and explicitly non-predatory.
+## Palette
 
-The emotional job is reassurance. Users should feel, "I can plan this properly, I understand what I am paying for, and nobody is trapping me in debt."
+Sampled from `batho.png`. **One brand color.** No teal, no gold, no cool grays.
 
-## Design Direction
+| Token | Light | Dark | Use |
+| --- | --- | --- | --- |
+| canvas | `#FAF5F0` cream | `#1A1410` warm charcoal | App background |
+| surface | `#FFFFFF` bone | `#241C16` espresso | Cards, panels |
+| surfaceRaised | `#FFFFFF` | `#2D2319` | Modals, popovers |
+| textPrimary | `#2A1F18` | `#F2E9DF` | Body, headings |
+| textSecondary | `#6B5A4D` | `#C8B8A6` | Captions, meta |
+| textMuted | `#8A7967` | `#9C8B7A` | Hints |
+| borderSoft | `#E8DDD0` | `#3A2E25` | Default borders |
+| borderStrong | `#D4C2AE` | `#574638` | Inputs, dividers |
+| primary | `#C0502B` | `#E27A55` | Brand CTA, links, indicators |
+| primaryStrong | `#9A3F22` | `#F0916D` | Hover, active |
+| primarySoft | `#F7E1D6` | `#3A1E14` | Soft brand backgrounds |
 
-Direction: Warm Calm.
+`success`, `warning`, `error`, `info` are warm-tinted so they sit inside the terracotta family.
 
-The interface should feel:
+### Hard rules
 
-- Premium but not flashy.
-- Human and grounded, not corporate-finance cold.
-- African-rooted without using decorative cliches.
-- Calm around money, with no urgency traps.
-- Confident enough for travel, careful enough for savings.
-
-Avoid:
-
-- Aggressive fintech patterns.
-- Dark blue corporate dashboards as the dominant mood.
-- Purple gradient AI aesthetics.
-- Generic travel stock-card grids.
-- Shame, scarcity, countdown pressure, or "last chance" behavior.
-- Over-rounded bubbly components.
-
-## Brand Principles
-
-### People First
-
-"Batho" means people. User-facing flows should center the person, their group, their comfort, and their real budget.
-
-### Debt-Free Confidence
-
-The product must repeatedly clarify:
-
-- 0% interest.
-- No credit checks.
-- No loans.
-- No debt.
-- Users save their own money.
-
-### Calm Transparency
-
-Every payment view should show what is saved, what remains, what stage is active, and what the next payment funds.
-
-### Travel With Intention
-
-The AI planner should help users choose the right destination, season, and budget before committing.
-
-## Voice And Copy
-
-Tone:
-
-- Warm.
-- Plain.
-- Supportive.
-- Specific.
-- Financially realistic.
-
-Use:
-
-- "Reserve your spot."
-- "Secure your travel plan early."
-- "Save monthly."
-- "Travel debt-free."
-- "This estimate can change before booking."
-- "Here is what looks comfortably affordable."
-
-Do not use:
-
-- "Lock in your spot."
-- "Buy now, pay later."
-- "Loan."
-- "Credit."
-- "Penalty."
-- "Late fee."
-- "Default."
-- "You failed to pay."
-- "Hurry."
-
-Reminder tone example:
-
-"Your next contribution is due soon. If this month is tight, you can pause or adjust your plan before the grace period ends."
+- No pure `#000` or pure cool gray. Dark mode is **warm**.
+- Brand color appears on no more than ~10% of any screen — Airbnb discipline.
+- Never reach for the teal/gold from the previous palette. They have been removed from the tokens.
+- The Ndebele triangle pattern (`BorderPattern`) is an accent only — hero footer divider, footer top band, one decorative edge per landing section. Not a wallpaper.
 
 ## Typography
 
-Recommended pairing:
+- **Display**: Inter Tight (Cereal-alike). Weights 500, 600, 700, 800. Tracks tight (`-0.02em`).
+- **Body**: Inter. Weights 400, 500, 600, 700.
+- **Editorial pull-quote** (web only): Instrument Serif italic. Used once on the hero ("Pay over time."), once in testimonial quotes. Never inside body copy.
+- **Data**: JetBrains Mono. Used for IDs, audit event names, tabular numbers where you need monospace.
 
-- Display: Fraunces.
-- Body and UI: Source Sans 3.
-- Data and money: Geist Mono or Source Sans 3 with tabular numbers.
+Scale (px / line-height):
 
-Rationale:
-
-- Fraunces gives warmth, craft, and travel/editorial character without becoming decorative.
-- Source Sans 3 is highly legible, practical, and calm across mobile and dense admin screens.
-- Tabular numbers keep money, dates, and progress stable.
-
-Type scale:
-
-```text
-Display XL: 56px / 60px, 700
-Display L: 44px / 50px, 700
-Heading 1: 34px / 40px, 700
-Heading 2: 28px / 34px, 700
-Heading 3: 22px / 28px, 650
-Body L: 18px / 28px, 400
-Body M: 16px / 24px, 400
-Body S: 14px / 20px, 400
-Label: 13px / 16px, 650
-Caption: 12px / 16px, 400
-Data: 14px / 20px, 500, tabular numbers
-```
-
-Mobile adjustments:
-
-- Keep headings strong but not oversized.
-- Avoid viewport-based font sizing.
-- Maintain readable line length and enough space for ZAR amounts.
-
-## Color
-
-The palette should feel warm and trustworthy, with enough contrast for finance-like clarity and enough life for travel.
-
-### Light Theme
-
-```text
-Canvas: #F8F4ED
-Surface: #FFFDF8
-Surface Raised: #FFFFFF
-Text Primary: #1D1B18
-Text Secondary: #5D574F
-Text Muted: #82786D
-Border Soft: #E6DDD1
-Border Strong: #CDBFAA
-
-Primary: #8B4E2F
-Primary Strong: #673620
-Primary Soft: #F1DED1
-
-Accent: #0E7C73
-Accent Strong: #075D56
-Accent Soft: #D9EFEC
-
-Gold: #C28A2E
-Gold Soft: #F5E7C8
-
-Success: #147A4A
-Warning: #A86612
-Error: #B23B32
-Info: #256D85
-```
-
-### Dark Theme
-
-```text
-Canvas: #171411
-Surface: #211D18
-Surface Raised: #2A241E
-Text Primary: #F7EFE5
-Text Secondary: #CFC2B3
-Text Muted: #A79786
-Border Soft: #3B332B
-Border Strong: #5A4A3D
-
-Primary: #D69A72
-Primary Strong: #F0B58E
-Primary Soft: #3A261B
-
-Accent: #65C5BA
-Accent Strong: #89DDD4
-Accent Soft: #173A36
-
-Gold: #E0B764
-Gold Soft: #3C3118
-
-Success: #65C58E
-Warning: #E0A64D
-Error: #E8786E
-Info: #72B8D2
-```
-
-Usage:
-
-- Primary anchors brand, major actions, active stages, and high-trust states.
-- Accent highlights AI planner affordances, recommendations, and selected season windows.
-- Gold is used sparingly for travel milestones and celebratory progress.
-- Semantic colors must stay restrained and readable.
+| Token | Size / LH | Use |
+| --- | --- | --- |
+| displayXl | 64 / 68 | Hero |
+| displayL | 48 / 54 | Section title |
+| heading1 | 32 / 38 | Page title (admin) |
+| heading2 | 24 / 30 | Card title |
+| heading3 | 20 / 26 | Subsection |
+| bodyL | 18 / 28 | Marketing copy |
+| bodyM | 16 / 24 | Default |
+| bodyS | 14 / 20 | Compact UI |
+| label | 13 / 16 | Form labels, eyebrows |
+| caption | 12 / 16 | Metadata |
 
 ## Spacing
 
-Base unit: 4px.
+`2xs:2 · xs:4 · sm:8 · md:16 · lg:24 · xl:32 · 2xl:48 · 3xl:64 · 4xl:96`
 
-Scale:
+Use the same scale everywhere. Don't introduce 10, 14, 18.
 
-```text
-2xs: 2px
-xs: 4px
-sm: 8px
-md: 16px
-lg: 24px
-xl: 32px
-2xl: 48px
-3xl: 64px
-4xl: 96px
-```
+## Radius
 
-Density:
+`xs:4 · sm:8 · md:12 · lg:16 · xl:24 · full:999`
 
-- Mobile app: comfortable, with clear touch targets and scannable trip data.
-- Landing page: spacious, with enough next-section visibility in the first viewport.
-- Admin panel: compact but calm, optimized for repeated work and scanning.
-
-## Layout
-
-Approach: hybrid.
-
-- Mobile app: card-light, clear hierarchy, bottom navigation, sheets for focused tasks.
-- Landing page: image-led first viewport, strong typography, full-width sections, no nested cards.
-- Admin: dense operational layout with sidebar, filters, tables, queues, and detail panels.
-
-Grid:
-
-```text
-Mobile: 4 columns, 16px margins
-Tablet: 8 columns, 24px margins
-Desktop: 12 columns, max content width 1180px
-Admin: fixed sidebar plus flexible content grid
-```
-
-Radius:
-
-```text
-xs: 4px
-sm: 6px
-md: 8px
-lg: 12px
-full: 999px, only for avatars, toggles, and pills
-```
-
-Use cards only for repeated items, dashboard modules, modals, and framed tools. Do not put cards inside cards.
+- Buttons: 12 (default) or 999 (pill on nav/hero).
+- Cards: 16 default, 24 for feature cards.
+- Inputs: 12.
+- Avatars and ndebele-bordered surfaces: 999 / 24.
 
 ## Motion
 
-Approach: intentional and subtle.
+| Duration | ms | When |
+| --- | --- | --- |
+| micro | 80 | Press feedback |
+| short | 160 | Hover, focus ring |
+| medium | 260 | Cards lift, modal open |
+| long | 420 | Page transitions |
+| expressive | 640 | Hero reveals |
 
-Durations:
+Easing: `enter` for incoming, `exit` for leaving, `move` for in-place.
 
-```text
-micro: 80ms
-short: 160ms
-medium: 260ms
-long: 420ms
+## Light + dark mode
+
+- Toggle, persisted in `localStorage` (web/admin) and `expo-secure-store` (mobile). Storage key: `batho-theme`.
+- **No system option.** Two states only: `light` (default) and `dark`. The user's choice is explicit.
+- Web/admin: an inline `<script>` in `<head>` reads storage and sets `data-theme` on `<html>` before React hydrates, preventing FOUC.
+- All colors live in CSS variables. Switching themes is a single attribute change on `<html>`.
+
+## Architecture
+
+```
+packages/
+  design-tokens/        # source of truth — colors, type, spacing, radius, motion
+    src/index.ts        # token values
+    src/css.ts          # tokensToCssVars(), allTokensCss() — emits :root + [data-theme=dark]
+  ui/
+    src/components/     # shared web React components + components.css
+    src/theme/          # ThemeProvider, ThemeToggle, init-script (web)
+    src/native/         # RN-safe entry: NativeThemeProvider, useNativeTheme, tokens
+apps/
+  web/                  # marketing landing — imports @batho/ui
+  admin/                # ops dashboard — imports @batho/ui
+  mobile/               # Expo Router — imports @batho/ui/native
 ```
 
-Easing:
+Web and admin inject `allTokensCss()` server-side in `<head>` via a `<style>` tag. The bundled `components.css` is shipped automatically via `transpilePackages`.
 
-```text
-enter: cubic-bezier(0.16, 1, 0.3, 1)
-exit: cubic-bezier(0.7, 0, 0.84, 0)
-move: cubic-bezier(0.65, 0, 0.35, 1)
-```
+Mobile cannot import CSS, so it imports only from `@batho/ui/native`, which has no DOM dependencies. Each screen reads colors from `useNativeTheme()` and constructs its `StyleSheet` via a `getStyles(c)` factory + `useMemo`.
 
-Motion should support comprehension:
+## Components
 
-- Stage progress fills smoothly.
-- Planner responses stream calmly.
-- Bottom sheets slide in without bounce excess.
-- Payment success confirms with restrained feedback.
-- Reduced-motion users receive instant state changes.
+| Component | Purpose |
+| --- | --- |
+| `Button` | Primary terracotta, secondary outline, ghost, inverse, sizes sm/md/lg, optional pill |
+| `Card` | Default, `feature` (24-radius, more padding), `muted` (canvas tinted) |
+| `Badge` | `neutral`, `brand`, `success`, `warning`, `danger`, `outline` |
+| `Field` + `Input` / `Select` / `Textarea` | Form primitives — 12-radius, 48-min-height, terracotta focus ring |
+| `NavBar` | Sticky blur backdrop, brand mark, nav links, theme toggle |
+| `Section` | `<section>` wrapper with optional eyebrow / title / description |
+| `Stat` | Admin dashboard tile — label, value, delta. Optional `highlight` border |
+| `Table` | Sticky-header, terracotta hover row, 16-radius outer border |
+| `BorderPattern` | Repeating Ndebele triangle SVG, follows `currentColor` |
+| `ThemeToggle` | Pill button, sun/moon icons, accessible (`aria-pressed`) |
 
-## Core Components
+Mobile-only:
 
-### Buttons
+| Component | Purpose |
+| --- | --- |
+| `NativeThemeProvider` | Wraps the Expo root, owns theme state + persistence |
+| `useNativeTheme()` | Returns `{ theme, colors, toggle, setTheme }` |
 
-- Primary: major next steps, such as Start planning, Create savings plan, Continue to payment.
-- Secondary: lower-commitment actions, such as Adjust plan or View details.
-- Ghost: navigation and low-priority actions.
-- Destructive: cancellation only, always paired with explanation and alternatives.
+## Hard "do not" list
 
-Buttons must include clear loading, disabled, focused, pressed, and error-adjacent states.
+1. **No teal, no gold, no cool gray.** Only terracotta and warm neutrals.
+2. **No pure black, no pure white in dark mode.** Dark canvas is `#1A1410`.
+3. **No emoji in marketing copy.** Use real iconography or none at all.
+4. **No drop shadows on flat cards.** Hover lift uses the `--shadow-md` token only.
+5. **No serif font in body copy.** Instrument Serif is reserved for pull-quotes and the single italic phrase in the hero.
+6. **No new color literals in app code.** If you reach for a hex value, add it to `packages/design-tokens` instead.
+7. **No CSS imports from React Native.** Mobile imports from `@batho/ui/native` exclusively.
 
-### Inputs
+## Adding new patterns
 
-- Large enough for mobile touch.
-- Labels always visible.
-- Helper copy must explain financial constraints warmly.
-- Error copy must explain the fix without blame.
-
-### Staged Funding Progress
-
-The signature component.
-
-Visual behavior:
-
-- Three stacked progress bars: Flights, Stay, Experiences.
-- Active stage highlighted.
-- Funded stages marked complete.
-- Queued stages muted but visible.
-- Each stage shows target, saved, remaining, and expected completion month.
-
-No UI may imply simultaneous 50/25/25 funding.
-
-### AI Planner
-
-The planner combines:
-
-- Conversational chat.
-- Guided chips and controls.
-- Budget comfort checks.
-- Seasonality recommendations.
-- Editable itinerary blocks.
-- Clear cost breakdown.
-- Savings-plan handoff.
-
-The planner must feel like a patient travel guide and budget coach, not a chatbot novelty.
-
-### Trip Dashboard
-
-Primary modules:
-
-- Upcoming trip summary.
-- Days until departure.
-- Active funding stage.
-- Next contribution.
-- Three-stage funding progress.
-- Payment history.
-- Notifications.
-- Pause or adjust plan.
-
-### Admin Queues
-
-Admin UI must optimize for:
-
-- Queue state.
-- Urgency.
-- Ownership.
-- Audit trail.
-- Clear next action.
-- Safe handling of sensitive data.
-
-## Landing Page UX
-
-First viewport:
-
-- Brand signal: Batho Travels.
-- Headline: "Travel the World. Pay Over Time. Zero Debt."
-- Supporting copy: AI-guided planning, structured monthly saving, no interest, no credit checks.
-- Primary action: Start planning.
-- Secondary action: See how it works.
-- Real or generated premium travel imagery with South African relevance.
-- Hint of the next section visible on mobile and desktop.
-
-Required sections:
-
-- How it works: plan with AI, choose your savings plan, save monthly, travel debt-free.
-- AI planner as the hero feature.
-- Staged funding explanation.
-- Seasonality intelligence.
-- Debt-free comparison against credit-funded travel.
-- Group trips with independent shares.
-- Custom destination requests.
-- Trust and security.
-- FAQ for SEO and GEO.
-- Footer with legal, contact, South Africa context.
-
-## Accessibility
-
-Target: WCAG 2.1 AA.
-
-Requirements:
-
-- Contrast verified in light and dark themes.
-- Visible focus states.
-- Semantic headings and landmarks.
-- Screen-reader labels for icons and progress.
-- Touch targets at least 44px.
-- Reduced-motion support.
-- Forms with labels, helper text, and accessible errors.
-- No text overlap at mobile widths.
-- Money and status information must not rely on color alone.
-
-## App Store And SEO Visual Requirements
-
-App store assets should communicate:
-
-- AI trip planning.
-- Save monthly.
-- 0% interest.
-- No credit checks.
-- Travel debt-free.
-- ZAR and South African relevance.
-
-SEO/GEO pages should use clear, citable statements and structured headings. Do not bury key facts in client-only rendering.
-
-## Design QA Checklist
-
-- Does the screen say Batho Travels, not Batho alone?
-- Does the screen avoid lender, loan, BNPL, and credit language?
-- Is the active funding stage clear?
-- Are flights funded before stay, and stay before experiences?
-- Are cost figures marked as estimates where needed?
-- Is pause or adjustment available before cancellation where relevant?
-- Does dark mode feel intentionally designed, not inverted?
-- Is the AI planner the premium centerpiece?
-- Is the experience calm under financial stress?
-
+1. Open `packages/design-tokens/src/index.ts`. If you need a new color or scale value, add it there.
+2. Build the primitive in `packages/ui/src/components/` and add CSS to `components.css`. The CSS must reference tokens via `var(--color-…)` — never a hex literal.
+3. Add a one-line entry to this file in the relevant table.
+4. Use the component from at least one app and visually confirm light + dark before merging.

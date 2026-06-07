@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   applyKycReviewDecision,
+  assertKycAllowsPayment,
   getKycStatusCopy,
   getKycTierRequirements,
   validateKycSubmission
@@ -89,5 +90,21 @@ describe("getKycStatusCopy", () => {
     expect(getKycStatusCopy("pending", "standard")).toBe(
       "Standard verification is being reviewed. You can keep planning while Batho Travels checks the documents."
     );
+  });
+});
+
+describe("assertKycAllowsPayment", () => {
+  it("blocks payments until the traveller has the required approved tier", () => {
+    expect(() => assertKycAllowsPayment("basic", 2_500_000)).toThrow(
+      "Standard verification is required before payment can start."
+    );
+  });
+
+  it("allows payment once the approved tier covers the trip estimate", () => {
+    expect(assertKycAllowsPayment("standard", 2_500_000)).toEqual({
+      allowed: true,
+      requiredTier: "standard",
+      message: "Standard verification approved. Payment can start."
+    });
   });
 });

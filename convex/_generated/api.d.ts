@@ -9,6 +9,7 @@
  */
 
 import type * as admin from "../admin.js";
+import type * as adminAuth from "../adminAuth.js";
 import type * as auth from "../auth.js";
 import type * as crons from "../crons.js";
 import type * as customDestinations from "../customDestinations.js";
@@ -18,6 +19,8 @@ import type * as kyc from "../kyc.js";
 import type * as notifications from "../notifications.js";
 import type * as payments from "../payments.js";
 import type * as planner from "../planner.js";
+import type * as sessionAuth from "../sessionAuth.js";
+import type * as status from "../status.js";
 import type * as support from "../support.js";
 import type * as trips from "../trips.js";
 
@@ -29,6 +32,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   admin: typeof admin;
+  adminAuth: typeof adminAuth;
   auth: typeof auth;
   crons: typeof crons;
   customDestinations: typeof customDestinations;
@@ -38,6 +42,8 @@ declare const fullApi: ApiFromModules<{
   notifications: typeof notifications;
   payments: typeof payments;
   planner: typeof planner;
+  sessionAuth: typeof sessionAuth;
+  status: typeof status;
   support: typeof support;
   trips: typeof trips;
 }>;

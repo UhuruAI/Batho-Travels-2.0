@@ -8,12 +8,12 @@ import {
   TRIP_TYPE_MINIMUM_MONTHS
 } from "@batho/config";
 import type { FundingStageKey, TripType } from "@batho/config";
-export * from "./planner.js";
-export * from "./trips.js";
-export * from "./kyc.js";
-export * from "./notifications.js";
-export * from "./groups.js";
-export * from "./admin.js";
+export * from "./planner";
+export * from "./trips";
+export * from "./kyc";
+export * from "./notifications";
+export * from "./groups";
+export * from "./admin";
 
 export type ValidationResult = {
   valid: boolean;
@@ -84,6 +84,48 @@ export type PlannerItineraryItem = {
   estimatedCostCents?: number;
 };
 
+export type PlannerSourceCitation = {
+  title: string;
+  url?: string;
+  publisher?: string;
+  retrievedAt: string;
+};
+
+export type PlannerCostRange = {
+  lowCents: number;
+  highCents: number;
+  rationale: string;
+  citations: PlannerSourceCitation[];
+};
+
+export type PlannerCostResearch = {
+  flights: PlannerCostRange;
+  stay: PlannerCostRange;
+  experiences: PlannerCostRange;
+  localTransport?: PlannerCostRange;
+};
+
+export type PlannerResearchSnapshot = {
+  destinationName: string;
+  travelMonth: string;
+  currency: "ZAR";
+  generatedAt: string;
+  confidence: "high" | "medium" | "low";
+  summary: string;
+  costResearch: PlannerCostResearch;
+  citations: PlannerSourceCitation[];
+};
+
+export type PlannerTravelTiming = {
+  selectedDepartureDate: string;
+  selectedDepartureMonth: string;
+  computedSavingsMonths: number;
+  planMonths: number;
+  savingsStartsAt: string;
+  timingWarning?: string;
+  nearestValidDepartureDate?: string;
+};
+
 export type PlannerResult = {
   destination: {
     name: string;
@@ -101,6 +143,23 @@ export type PlannerResult = {
   };
   itinerary: PlannerItineraryItem[];
   assumptions: string[];
+  briefReflection?: string[];
+  travelTiming?: PlannerTravelTiming;
+  costConfidence?: "high" | "medium" | "low";
+  costResearch?: PlannerCostResearch;
+  sourceCitations?: PlannerSourceCitation[];
+  generatedAt?: string;
+  draftVersion?: number;
+  editableInputs?: {
+    destinationIdea?: string;
+    selectedDepartureDate?: string;
+    selectedDepartureMonth?: string;
+    roughBudgetCents?: number;
+    travellerGroup?: "solo" | "couple" | "family" | "group";
+    interests?: string[];
+    dateFlexibility?: "fixed" | "someFlexibility" | "veryFlexible";
+    preferredPlanMonths?: number;
+  };
   savingsPlanInput: SavingsPlanInput;
 };
 

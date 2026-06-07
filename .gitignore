@@ -17,3 +17,18 @@ store/
 *.db
 *.db-wal
 *.db-shm
+
+# Local tooling / scratch
+.claude/
+.vscode/
+.idea/
+
+# Stray screenshots and scratch files at repo root
+/batho.png
+/expo.jpg
+
+# Mobile app scratch (screenshots, QR pages, stray duplicates).
+# Real assets live in apps/mobile/assets/.
+/apps/mobile/*.jpg
+/apps/mobile/*.png
+/apps/mobile/expo-qr.html

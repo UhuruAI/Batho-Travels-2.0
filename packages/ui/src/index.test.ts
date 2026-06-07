@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { formatProgressPercent, getFundingStageStatus } from "./index";
+// Import from the JSX/DOM-free legacy module so Vitest can run without
+// having to parse JSX or the web-only CSS side-effect import.
+import { formatProgressPercent, getFundingStageStatus } from "./legacy";
 
 describe("ui recipes", () => {
   it("formats staged funding progress without exceeding 100%", () => {

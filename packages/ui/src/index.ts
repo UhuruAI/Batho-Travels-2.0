@@ -1,45 +1,32 @@
-export type ButtonTone = "primary" | "secondary" | "ghost" | "destructive";
-export type StageStatus = "funded" | "active" | "queued";
+// Web entry. Side-effect CSS import included — bundled by Next via transpilePackages.
+// React Native consumers MUST import from "@batho/ui/native" to avoid this CSS.
+import "./components/components.css";
 
-export type ButtonRecipe = {
-  tone: ButtonTone;
-  label: string;
-  ariaLabel: string;
-  disabled?: boolean;
-  loading?: boolean;
-};
+export { Button } from "./components/Button";
+export { Card } from "./components/Card";
+export { Badge } from "./components/Badge";
+export { Field, Input, Select, Textarea } from "./components/Input";
+export { Section } from "./components/Section";
+export { Stat } from "./components/Stat";
+export { Table } from "./components/Table";
+export { NavBar } from "./components/NavBar";
+export { BorderPattern } from "./components/BorderPattern";
 
-export type FundingStageProgressItem = {
-  key: "flights" | "stay" | "experiences";
-  label: string;
-  targetCents: number;
-  fundedCents: number;
-  status: StageStatus;
-  expectedCompletionMonth?: number;
-};
+export { ThemeProvider, useTheme } from "./theme/ThemeProvider";
+export { ThemeToggle } from "./theme/ThemeToggle";
+export { themeInitScript } from "./theme/init-script";
 
-export function createButtonRecipe(recipe: ButtonRecipe): ButtonRecipe {
-  return recipe;
-}
+// Legacy contract — preserved for any web consumer that referenced these.
+// Native consumers should pull these from "@batho/ui/native" instead.
+export type {
+  ButtonTone,
+  StageStatus,
+  ButtonRecipe,
+  FundingStageProgressItem
+} from "./legacy";
 
-export function getFundingStageStatus(
-  fundedCents: number,
-  targetCents: number,
-  isActive: boolean
-): StageStatus {
-  if (targetCents > 0 && fundedCents >= targetCents) {
-    return "funded";
-  }
-
-  return isActive ? "active" : "queued";
-}
-
-export function formatProgressPercent(fundedCents: number, targetCents: number): string {
-  if (targetCents <= 0) {
-    return "0%";
-  }
-
-  const percent = Math.min(100, Math.round((fundedCents / targetCents) * 100));
-  return `${percent}%`;
-}
-
+export {
+  createButtonRecipe,
+  getFundingStageStatus,
+  formatProgressPercent
+} from "./legacy";

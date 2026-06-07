@@ -1,9 +1,10 @@
-import { mutation } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import {
   assertSupportiveNotificationCopy,
   validateNotificationPreferences
 } from "../packages/core/src/index";
+import { requireAuthenticatedUser } from "./sessionAuth";
 
 const notificationChannel = v.union(
   v.literal("email"),
@@ -38,21 +39,34 @@ export const queueSupportiveNotification = mutation({
 
 export const updateNotificationPreferences = mutation({
   args: {
-    userId: v.id("users"),
+    sessionToken: v.string(),
     channels: v.array(notificationChannel)
   },
   handler: async (ctx, args) => {
+    const { user } = await requireAuthenticatedUser(ctx, args.sessionToken);
     const preferences = validateNotificationPreferences({ channels: args.channels });
 
     if (!preferences.valid) {
       throw new Error(preferences.message ?? "Choose supported Batho Travels channels.");
     }
 
-    await ctx.db.patch(args.userId, {
+    await ctx.db.patch(user._id, {
       notificationChannels: preferences.channels,
       updatedAt: Date.now()
     });
 
     return preferences;
+  }
+});
+
+export const getNotificationPreferences = query({
+  args: {
+    sessionToken: v.string()
+  },
+  handler: async (ctx, args) => {
+    const { user } = await requireAuthenticatedUser(ctx, args.sessionToken);
+    return {
+      channels: user.notificationChannels
+    };
   }
 });

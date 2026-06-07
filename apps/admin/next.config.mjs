@@ -4,7 +4,7 @@ import path from "node:path";
 const nextConfig = {
   outputFileTracingRoot: path.join(process.cwd(), "../.."),
   reactStrictMode: true,
-  transpilePackages: ["@batho/config", "@batho/core", "@batho/design-tokens"]
+  transpilePackages: ["@batho/config", "@batho/core", "@batho/design-tokens", "@batho/ui"]
 };
 
 export default nextConfig;

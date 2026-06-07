@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { allTokensCss } from "@batho/design-tokens";
+import { themeInitScript } from "@batho/ui";
+import { AppProviders } from "./providers";
 import "./globals.css";
 
 const siteUrl = "https://bathotravels.co.za";
@@ -55,10 +58,24 @@ export const metadata: Metadata = {
   }
 };
 
+const tokensCss = allTokensCss();
+
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en-ZA">
-      <body>{children}</body>
+    <html lang="en-ZA" suppressHydrationWarning>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap"
+          rel="stylesheet"
+        />
+        <style dangerouslySetInnerHTML={{ __html: tokensCss }} />
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
+      <body>
+        <AppProviders>{children}</AppProviders>
+      </body>
     </html>
   );
 }

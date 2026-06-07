@@ -1,4 +1,5 @@
 import { APP_NAME, CURRENCY, LOCALE } from "@batho/config";
+import { Badge, BorderPattern, Button, Card, NavBar, Section } from "@batho/ui";
 
 const siteUrl = "https://bathotravels.co.za";
 
@@ -10,18 +11,21 @@ const promiseItems = [
   `${CURRENCY} plans`
 ];
 
-const plannerSignals = [
+const promiseSteps = [
   {
-    title: "Budget fit",
-    body: "The planner starts with what a traveller can save monthly, then suggests destinations that fit the plan."
+    step: "01",
+    title: "Plan with the AI Trip Planner",
+    body: "Share your budget, interests, and dates. The planner suggests destinations that genuinely fit, with clear assumptions and estimated cost."
   },
   {
-    title: "Seasonality",
-    body: "Travel timing considers school holidays, weather, peak pricing, and quieter months before a plan is handed to savings."
+    step: "02",
+    title: "Save monthly in ZAR, with no interest",
+    body: "Choose a plan length up to 12 months. We hold contributions in ZAR. No credit checks. No loans. No debt."
   },
   {
-    title: "Structured handoff",
-    body: "Final plans move into the calculator with destination, estimate, assumptions, itinerary, and monthly target already aligned."
+    step: "03",
+    title: "Travel calmly when your plan is ready",
+    body: "Flights are funded first, then stay, then experiences. Receipts are tracked end to end. Pause, adjust, or cancel any time."
   }
 ];
 
@@ -31,11 +35,19 @@ const stageRows = [
   { label: "Experiences", copy: "Added last for tours, moments, and flexible extras.", width: "38%" }
 ];
 
-const journeyRows = [
-  "Tell the AI planner your budget, interests, dates, and trip type.",
-  "Review destination matches with clear assumptions and estimated costs.",
-  "Choose a plan length up to 12 months, with minimums by trip type.",
-  "Save monthly while Batho Travels funds flights, stay, then experiences in order."
+const groupTestimonials = [
+  {
+    initials: "AD",
+    name: "Amina D.",
+    role: "Cape Town · 10-month plan",
+    quote: "I booked Zanzibar before I had the money. The plan stayed honest the whole time. No surprises, no debt."
+  },
+  {
+    initials: "NM",
+    name: "Neo M.",
+    role: "Johannesburg · group trip",
+    quote: "We organised four friends. Each of us saved on our own pace. Nobody had to carry anyone else's payment."
+  }
 ];
 
 const faqs = [
@@ -92,252 +104,265 @@ const structuredData = {
       publisher: { "@id": `${siteUrl}/#organization` }
     },
     {
-      "@type": "SoftwareApplication",
-      "@id": `${siteUrl}/#app`,
-      name: APP_NAME,
-      applicationCategory: "TravelApplication",
-      operatingSystem: "iOS, Android, Web",
-      inLanguage: LOCALE,
-      offers: {
-        "@type": "Offer",
-        priceCurrency: CURRENCY,
-        availability: "https://schema.org/PreOrder"
-      },
-      featureList: [
-        "AI trip planning",
-        "Structured monthly savings",
-        "Sequential travel funding",
-        "Group trip coordination",
-        "Custom destination requests",
-        "No credit checks",
-        "No loans",
-        "No debt"
-      ]
-    },
-    {
       "@type": "FAQPage",
       "@id": `${siteUrl}/#faq`,
       mainEntity: faqs.map((item) => ({
         "@type": "Question",
         name: item.question,
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: item.answer
-        }
+        acceptedAnswer: { "@type": "Answer", text: item.answer }
       }))
     }
   ]
 };
 
+const navLinks = [
+  { label: "Planner", href: "#planner" },
+  { label: "Saving", href: "#saving" },
+  { label: "Groups", href: "#groups" },
+  { label: "FAQ", href: "#faq" }
+];
+
 export default function LandingPage() {
   return (
-    <main>
+    <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
 
-      <section className="hero" id="top" aria-labelledby="hero-title">
-        <nav className="topNav" aria-label="Primary navigation">
-          <a className="brand" href="#top" aria-label={`${APP_NAME} home`}>
-            {APP_NAME}
-          </a>
-          <div className="navLinks" aria-label="Landing sections">
-            <a href="#planner">Planner</a>
-            <a href="#saving">Saving</a>
-            <a href="#groups">Groups</a>
-            <a href="#faq">FAQ</a>
-          </div>
-        </nav>
+      <NavBar
+        brandLabel={APP_NAME}
+        brandHref="#top"
+        brandImageSrc="/batho-logo.png"
+        links={navLinks}
+        actions={
+          <a className="batho-button batho-button--sm batho-button--pill" href="#planner">Plan a trip</a>
+        }
+      />
 
-        <div className="heroContent">
-          <p className="eyebrow">Built for South African travellers</p>
-          <h1 id="hero-title">Travel the World. Pay Over Time. Zero Debt.</h1>
-          <p className="lede">
-            {APP_NAME} pairs an AI Trip Planner with structured monthly savings, so people can
-            plan custom trips early, save calmly in {CURRENCY}, and travel without borrowing.
-          </p>
-          <div className="actions" aria-label="Primary calls to action">
-            <a className="button primary" href="#planner">
-              Start with the AI planner
-            </a>
-            <a className="button secondary" href="#saving">
-              See how saving works
-            </a>
-          </div>
-        </div>
-
-        <div className="heroFooter" aria-label="Trust signals">
-          {promiseItems.map((item) => (
-            <span key={item}>{item}</span>
-          ))}
-        </div>
-
-        <a
-          className="imageCredit"
-          href="https://commons.wikimedia.org/wiki/File:Table_Mountain_from_Blouberg_beach.jpg"
-          rel="noreferrer"
-          target="_blank"
-        >
-          Cape Town image by Michael Rowe, CC BY-SA 4.0
-        </a>
-      </section>
-
-      <section className="introBand" aria-label="Product positioning">
-        <p>
-          No prebuilt catalogue. No package funnel. The first product moment is a guided
-          conversation that turns a traveller&apos;s budget, season, and interests into a real plan.
-        </p>
-      </section>
-
-      <section className="section plannerSection" id="planner" aria-labelledby="planner-title">
-        <div className="sectionHeader">
-          <p className="eyebrow">Hero product</p>
-          <h2 id="planner-title">AI planning that feels calm, specific, and useful.</h2>
-          <p>
-            The planner combines chat with guided controls so the experience feels human without
-            becoming vague. Every suggested trip clearly marks estimated costs and assumptions.
-          </p>
-        </div>
-
-        <div className="plannerPanel" aria-label="AI planner preview">
-          <div className="plannerPrompt">
-            <span>Traveller brief</span>
-            <strong>R3,200 per month, beach culture, September, 2 people</strong>
-          </div>
-          <div className="plannerResult">
-            <p className="cardLabel">Suggested direction</p>
-            <h3>Zanzibar over 9 to 10 months</h3>
-            <p>
-              Warm water, regional flight timing, balanced stay options, and enough planning runway
-              before peak December pricing.
+      <main id="top">
+        <section className="web-hero" aria-labelledby="hero-title">
+          <div className="web-hero__content">
+            <span className="web-hero__eyebrow">Built for South African travellers</span>
+            <h1 className="web-hero__title" id="hero-title">
+              Travel the world. <em>Pay over time.</em><br />Zero debt.
+            </h1>
+            <p className="web-hero__lede">
+              {APP_NAME} pairs an AI Trip Planner with structured monthly savings, so people can
+              plan custom trips early, save calmly in {CURRENCY}, and travel without borrowing.
             </p>
+            <div className="web-hero__actions">
+              <a className="batho-button batho-button--lg" href="#planner">Start with the AI planner</a>
+              <a className="batho-button batho-button--inverse batho-button--lg" href="#saving">See how saving works</a>
+            </div>
           </div>
-          <dl className="costList">
-            <div>
-              <dt>Estimated total</dt>
-              <dd>R57,800</dd>
-            </div>
-            <div>
-              <dt>Recommended plan</dt>
-              <dd>10 months</dd>
-            </div>
-            <div>
-              <dt>Savings handoff</dt>
-              <dd>Ready</dd>
-            </div>
-          </dl>
-        </div>
-      </section>
+        </section>
 
-      <section className="section signalSection" aria-labelledby="signals-title">
-        <div className="sectionHeader">
-          <p className="eyebrow">Decision quality</p>
-          <h2 id="signals-title">The planner suggests destinations only when the numbers make sense.</h2>
-        </div>
-        <div className="asymmetricGrid">
-          {plannerSignals.map((item) => (
-            <article key={item.title}>
-              <h3>{item.title}</h3>
-              <p>{item.body}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="section savingSection" id="saving" aria-labelledby="saving-title">
-        <div className="sectionHeader">
-          <p className="eyebrow">Structured savings</p>
-          <h2 id="saving-title">Flights first. Stay second. Experiences last.</h2>
-          <p>
-            Batho Travels keeps funding sequential and transparent. Progress is shown by stage, with
-            supportive status copy and no lender-style pressure.
-          </p>
+        <div className="web-promise" aria-label="How it works">
+          <div className="web-promise__grid">
+            {promiseSteps.map((item) => (
+              <article key={item.step} className="web-promise__item">
+                <span className="web-promise__step">{item.step}</span>
+                <h3 className="web-promise__title">{item.title}</h3>
+                <p className="web-promise__copy">{item.body}</p>
+              </article>
+            ))}
+          </div>
         </div>
 
-        <div className="stageBoard" aria-label="Sequential funding stages">
-          {stageRows.map((stage) => (
-            <article key={stage.label} className="stageRow">
-              <div>
-                <h3>{stage.label}</h3>
-                <p>{stage.copy}</p>
+        <Section
+          id="planner"
+          eyebrow="Hero product"
+          title="AI planning that feels calm, specific, and useful."
+          description="The planner combines chat with guided controls so the experience feels human without becoming vague. Every suggested trip clearly marks estimated costs and assumptions."
+        >
+          <div className="web-split">
+            <div className="web-split__visual">
+              <div className="web-planner-mock" aria-hidden="true">
+                <header className="web-planner-mock__chrome">
+                  <div className="web-planner-mock__dots">
+                    <span /><span /><span />
+                  </div>
+                  <div className="web-planner-mock__chrome-title">
+                    <img src="/batho-logo.png" alt="" />
+                    <span>AI Trip Planner</span>
+                  </div>
+                  <span className="web-planner-mock__chrome-badge">Beta</span>
+                </header>
+
+                <section className="web-planner-mock__brief">
+                  <span className="web-planner-mock__brief-label">Traveller brief</span>
+                  <p>“R3,200 a month, beach culture, September, 2 people.”</p>
+                </section>
+
+                <section className="web-planner-mock__section">
+                  <div className="web-planner-mock__section-head">
+                    <span className="web-planner-mock__label">Suggested direction</span>
+                    <span className="web-planner-mock__pill">10 months</span>
+                  </div>
+                  <h4 className="web-planner-mock__destination">Zanzibar · Stone Town &amp; Nungwi</h4>
+                </section>
+
+                <section className="web-planner-mock__section">
+                  <span className="web-planner-mock__label">Day-by-day shape</span>
+                  <ul className="web-planner-mock__itinerary">
+                    <li><span className="web-planner-mock__day">D1</span><span>Stone Town — arrive, sunset dhow.</span></li>
+                    <li><span className="web-planner-mock__day">D2</span><span>Spice farm tour &amp; Forodhani night market.</span></li>
+                    <li><span className="web-planner-mock__day">D3</span><span>Transfer to Nungwi — reef snorkel.</span></li>
+                    <li className="web-planner-mock__more"><span className="web-planner-mock__day web-planner-mock__day--ghost">+5</span><span>more days planned</span></li>
+                  </ul>
+                </section>
+
+                <section className="web-planner-mock__section">
+                  <span className="web-planner-mock__label">Budget breakdown</span>
+                  <div className="web-planner-mock__bar" role="img" aria-label="Budget breakdown bar">
+                    <span className="web-planner-mock__bar-seg web-planner-mock__bar-seg--flights" style={{ flexBasis: "32%" }} />
+                    <span className="web-planner-mock__bar-seg web-planner-mock__bar-seg--stay" style={{ flexBasis: "38%" }} />
+                    <span className="web-planner-mock__bar-seg web-planner-mock__bar-seg--food" style={{ flexBasis: "18%" }} />
+                    <span className="web-planner-mock__bar-seg web-planner-mock__bar-seg--buffer" style={{ flexBasis: "12%" }} />
+                  </div>
+                  <ul className="web-planner-mock__legend">
+                    <li><span className="web-planner-mock__dot web-planner-mock__dot--flights" />Flights <strong>R18,500</strong></li>
+                    <li><span className="web-planner-mock__dot web-planner-mock__dot--stay" />Stay <strong>R22,000</strong></li>
+                    <li><span className="web-planner-mock__dot web-planner-mock__dot--food" />Food &amp; tours <strong>R10,300</strong></li>
+                    <li><span className="web-planner-mock__dot web-planner-mock__dot--buffer" />Buffer <strong>R7,000</strong></li>
+                  </ul>
+                </section>
+
+                <footer className="web-planner-mock__totals">
+                  <div className="web-planner-mock__total-line"><span>Estimated total</span><strong>R57,800</strong></div>
+                  <div className="web-planner-mock__total-line"><span>Monthly plan</span><strong>R5,780</strong></div>
+                  <div className="web-planner-mock__total-line"><span>Savings handoff</span><strong className="web-planner-mock__ready">● Ready</strong></div>
+                </footer>
               </div>
-              <div className="stageTrack" aria-hidden="true">
-                <span style={{ width: stage.width }} />
+            </div>
+            <div>
+              <Badge tone="brand">Traveller brief</Badge>
+              <h3 style={{ marginTop: 16, fontFamily: "var(--font-display)", fontSize: 28, fontWeight: 600 }}>
+                R3,200 per month, beach culture, September, 2 people.
+              </h3>
+              <p style={{ color: "var(--color-text-secondary)", fontSize: 17, lineHeight: 1.6 }}>
+                The planner reads budget and season together. It will only suggest a destination if the
+                numbers genuinely fit, and it explains every assumption it made along the way.
+              </p>
+              <ul style={{ listStyle: "none", margin: "20px 0 32px", padding: 0, display: "grid", gap: 12 }}>
+                <li style={{ display: "flex", gap: 12 }}><Badge tone="brand">✓</Badge><span>Budget honesty before destination matching.</span></li>
+                <li style={{ display: "flex", gap: 12 }}><Badge tone="brand">✓</Badge><span>Seasonality first — peaks, shoulders, school terms.</span></li>
+                <li style={{ display: "flex", gap: 12 }}><Badge tone="brand">✓</Badge><span>Structured handoff into your savings plan.</span></li>
+              </ul>
+              <Button>Try the planner</Button>
+            </div>
+          </div>
+        </Section>
+
+        <Section
+          id="saving"
+          eyebrow="Structured savings"
+          title="Flights first. Stay second. Experiences last."
+          description="Batho Travels keeps funding sequential and transparent. Progress is shown by stage, with supportive status copy and no lender-style pressure."
+        >
+          <BorderPattern height={20} />
+          <div style={{ height: 32 }} />
+          <div className="web-stages">
+            {stageRows.map((stage, index) => (
+              <article key={stage.label} className="web-stage">
+                <span className="web-stage__index">{String(index + 1).padStart(2, "0")}</span>
+                <div>
+                  <h3 className="web-stage__title">{stage.label}</h3>
+                  <p className="web-stage__copy">{stage.copy}</p>
+                </div>
+                <div className="web-stage__track" aria-hidden="true">
+                  <span className="web-stage__fill" style={{ width: stage.width }} />
+                </div>
+              </article>
+            ))}
+          </div>
+        </Section>
+
+        <Section
+          id="groups"
+          eyebrow="Groups and custom trips"
+          title="Plan together while each traveller saves independently."
+          description="Coordinators can request custom destinations, invite participants, and keep group progress visible without forcing one person to carry everyone's payment risk."
+        >
+          <div className="web-group-grid">
+            {groupTestimonials.map((person) => (
+              <Card key={person.name} variant="feature">
+                <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                  <span className="web-group-card__avatar">{person.initials}</span>
+                  <div>
+                    <p className="web-group-card__name">{person.name}</p>
+                    <p className="web-group-card__role">{person.role}</p>
+                  </div>
+                </div>
+                <p className="web-group-card__quote">"{person.quote}"</p>
+                <Badge tone="brand">Independent shares</Badge>
+              </Card>
+            ))}
+          </div>
+        </Section>
+
+        <Section
+          id="faq"
+          eyebrow="FAQ"
+          title="Clear answers for travellers."
+          description="Everything you'd ask before saving for your first trip with Batho Travels."
+        >
+          <div className="web-faq">
+            {faqs.map((item) => (
+              <details key={item.question} className="web-faq__item">
+                <summary>{item.question}</summary>
+                <p className="web-faq__answer">{item.answer}</p>
+              </details>
+            ))}
+          </div>
+        </Section>
+
+        <footer className="web-footer">
+          <BorderPattern className="web-footer__pattern" height={20} />
+          <div className="web-footer__inner">
+            <div className="web-footer__brand">
+              <img className="web-footer__logo" src="/batho-logo.png" alt={`${APP_NAME} logo`} />
+              <h3>{APP_NAME}</h3>
+              <p>Travel the World. Pay Over Time. Zero Debt.</p>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 16 }}>
+                {promiseItems.map((item) => (
+                  <span key={item} style={{ display: "inline-block", padding: "6px 12px", borderRadius: 999, background: "rgba(255,255,255,0.08)", fontSize: 13, color: "rgba(255,255,255,0.82)" }}>
+                    {item}
+                  </span>
+                ))}
               </div>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="section journeySection" aria-labelledby="journey-title">
-        <div className="sectionHeader">
-          <p className="eyebrow">Traveller journey</p>
-          <h2 id="journey-title">From idea to savings plan without duplicate entry.</h2>
-        </div>
-        <ol className="journeyList">
-          {journeyRows.map((row) => (
-            <li key={row}>{row}</li>
-          ))}
-        </ol>
-      </section>
-
-      <section className="section groupsSection" id="groups" aria-labelledby="groups-title">
-        <div className="sectionHeader">
-          <p className="eyebrow">Groups and custom trips</p>
-          <h2 id="groups-title">Plan together while each traveller saves independently.</h2>
-          <p>
-            Coordinators can request custom destinations, invite participants, and keep group progress
-            visible without forcing one person to carry everyone&apos;s payment risk.
-          </p>
-        </div>
-        <div className="groupDetails">
-          <article>
-            <span>01</span>
-            <h3>Custom destination review</h3>
-            <p>Requests flow to an operations queue for feasibility, seasonality, and supplier checks.</p>
-          </article>
-          <article>
-            <span>02</span>
-            <h3>Independent participant shares</h3>
-            <p>Each participant gets their own savings target, status, receipts, and reminders.</p>
-          </article>
-        </div>
-      </section>
-
-      <section className="section trustSection" aria-labelledby="trust-title">
-        <div className="sectionHeader">
-          <p className="eyebrow">Trust posture</p>
-          <h2 id="trust-title">Premium travel planning, not aggressive finance.</h2>
-          <p>
-            Reserve your spot or secure your travel plan early with trusted providers, including card
-            and EFT options. Support flows include grace, pause, adjust, and cancel.
-          </p>
-        </div>
-      </section>
-
-      <section className="section faqSection" id="faq" aria-labelledby="faq-title">
-        <div className="sectionHeader">
-          <p className="eyebrow">FAQ</p>
-          <h2 id="faq-title">Clear answers for travellers and search engines.</h2>
-        </div>
-        <div className="faqList">
-          {faqs.map((item) => (
-            <article key={item.question}>
-              <h3>{item.question}</h3>
-              <p>{item.answer}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="closingBand" aria-label="Final call to action">
-        <p className="eyebrow">Batho Travels V1</p>
-        <h2>Custom travel plans, structured savings, and calm support from start to departure.</h2>
-        <a className="button primary" href="#planner">
-          Plan a trip
-        </a>
-      </section>
-    </main>
+            </div>
+            <div>
+              <h4>Product</h4>
+              <a href="#planner">AI planner</a>
+              <a href="#saving">Saving</a>
+              <a href="#groups">Groups</a>
+              <a href="#faq">FAQ</a>
+            </div>
+            <div>
+              <h4>Company</h4>
+              <a href="#top">About</a>
+              <a href="#top">Press</a>
+              <a href="#top">Privacy</a>
+              <a href="#top">Terms</a>
+            </div>
+          </div>
+          <div className="web-footer__inner web-footer__credit">
+            <span>© {new Date().getFullYear()} {APP_NAME}. Built for South Africa.</span>
+            <a
+              className="web-footer__admin-dots"
+              href={process.env.NEXT_PUBLIC_ADMIN_URL ?? "http://localhost:3001/login"}
+              aria-label="Admin sign in"
+              title="Admin sign in"
+            >
+              <span aria-hidden="true" />
+              <span aria-hidden="true" />
+              <span aria-hidden="true" />
+            </a>
+          </div>
+        </footer>
+      </main>
+    </>
   );
 }

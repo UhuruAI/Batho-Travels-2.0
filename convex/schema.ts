@@ -30,6 +30,8 @@ export default defineSchema({
     name: v.optional(v.string()),
     phone: v.optional(v.string()),
     googleSubject: v.optional(v.string()),
+    passwordHash: v.optional(v.string()),
+    passwordSalt: v.optional(v.string()),
     kycTier: v.union(v.literal("basic"), v.literal("standard"), v.literal("enhanced")),
     notificationChannels: v.array(notificationChannel),
     createdAt: v.number(),
@@ -46,11 +48,17 @@ export default defineSchema({
     createdAt: v.number()
   })
     .index("by_user", ["userId"])
+    .index("by_token", ["sessionTokenHash"])
     .index("by_expiry", ["expiresAt"]),
 
   plannerSessions: defineTable({
     userId: v.id("users"),
-    status: v.union(v.literal("draft"), v.literal("readyForSavings"), v.literal("converted")),
+    status: v.union(
+      v.literal("draft"),
+      v.literal("readyForSavings"),
+      v.literal("converted"),
+      v.literal("archived")
+    ),
     guidedInputs: v.any(),
     messages: v.array(
       v.object({
@@ -59,7 +67,23 @@ export default defineSchema({
         createdAt: v.number()
       })
     ),
+    currentTurn: v.optional(v.any()),
+    optionHistory: v.optional(
+      v.array(
+        v.object({
+          optionId: v.string(),
+          label: v.string(),
+          value: v.optional(v.any()),
+          createdAt: v.number()
+        })
+      )
+    ),
+    currentStep: v.optional(v.string()),
     structuredResult: v.optional(v.any()),
+    briefSnapshot: v.optional(v.any()),
+    researchSnapshot: v.optional(v.any()),
+    draftVersion: v.optional(v.number()),
+    draftVersions: v.optional(v.array(v.any())),
     createdAt: v.number(),
     updatedAt: v.number()
   }).index("by_user_status", ["userId", "status"]),
@@ -243,6 +267,15 @@ export default defineSchema({
     createdAt: v.number(),
     updatedAt: v.number()
   }).index("by_user", ["userId"]),
+
+  adminSessions: defineTable({
+    email: v.string(),
+    tokenHash: v.string(),
+    createdAt: v.number(),
+    expiresAt: v.number()
+  })
+    .index("by_token", ["tokenHash"])
+    .index("by_expiry", ["expiresAt"]),
 
   auditLogs: defineTable({
     actorUserId: v.optional(v.id("users")),

@@ -3,7 +3,8 @@ import {
   validateCustomDestinationRequest,
   validateGroupParticipants
 } from "@batho/core";
-import { colors, radius, spacing } from "@batho/design-tokens";
+import { radius, spacing } from "@batho/design-tokens";
+import { useNativeTheme } from "@batho/ui/native";
 import { useMemo, useState } from "react";
 import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
 
@@ -13,6 +14,8 @@ const initialParticipants = [
 ];
 
 export function GroupsScreen() {
+  const { colors: c } = useNativeTheme();
+  const styles = useMemo(() => getStyles(c), [c]);
   const [includeThirdTraveller, setIncludeThirdTraveller] = useState(false);
   const [notesExpanded, setNotesExpanded] = useState(false);
   const participants = useMemo(
@@ -87,7 +90,7 @@ export function GroupsScreen() {
             style={styles.secondaryButton}
           >
             <Text style={styles.secondaryButtonText}>
-              {includeThirdTraveller ? "Remove demo traveller" : "Add demo traveller"}
+              {includeThirdTraveller ? "Remove traveller" : "Add traveller"}
             </Text>
           </Pressable>
         </View>
@@ -137,7 +140,7 @@ export function GroupsScreen() {
             style={styles.primaryButton}
           >
             <Text style={styles.primaryButtonText}>
-              {notesExpanded ? "Use shorter demo note" : "Add richer demo note"}
+              {notesExpanded ? "Use shorter note" : "Add richer note"}
             </Text>
           </Pressable>
         </View>
@@ -154,10 +157,11 @@ function formatRand(amountCents: number): string {
   }).format(amountCents / 100);
 }
 
-const styles = StyleSheet.create({
+function getStyles(c: import("@batho/ui/native").Palette) {
+  return StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: colors.light.canvas
+    backgroundColor: c.canvas
   },
   container: {
     gap: spacing.lg,
@@ -168,20 +172,20 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.lg
   },
   eyebrow: {
-    color: colors.light.primary,
+    color: c.primary,
     fontSize: 13,
     fontWeight: "700",
     letterSpacing: 0,
     textTransform: "uppercase"
   },
   title: {
-    color: colors.light.textPrimary,
+    color: c.textPrimary,
     fontSize: 34,
     fontWeight: "700",
     lineHeight: 40
   },
   copy: {
-    color: colors.light.textSecondary,
+    color: c.textSecondary,
     fontSize: 16,
     lineHeight: 24
   },
@@ -189,8 +193,8 @@ const styles = StyleSheet.create({
     gap: spacing.md,
     padding: spacing.lg,
     borderRadius: radius.md,
-    backgroundColor: colors.light.surfaceRaised,
-    borderColor: colors.light.borderSoft,
+    backgroundColor: c.surfaceRaised,
+    borderColor: c.borderSoft,
     borderWidth: 1
   },
   cardHeader: {
@@ -200,20 +204,20 @@ const styles = StyleSheet.create({
     justifyContent: "space-between"
   },
   cardTitle: {
-    color: colors.light.textPrimary,
+    color: c.textPrimary,
     fontSize: 20,
     fontWeight: "700"
   },
   cardMeta: {
-    color: colors.light.textSecondary,
+    color: c.textSecondary,
     fontSize: 14,
     lineHeight: 20
   },
   readyPill: {
     overflow: "hidden",
     borderRadius: radius.full,
-    backgroundColor: colors.light.accentSoft,
-    color: colors.light.accentStrong,
+    backgroundColor: c.accentSoft,
+    color: c.accentStrong,
     fontSize: 13,
     fontWeight: "700",
     paddingHorizontal: spacing.md,
@@ -222,8 +226,8 @@ const styles = StyleSheet.create({
   warningPill: {
     overflow: "hidden",
     borderRadius: radius.full,
-    backgroundColor: colors.light.goldSoft,
-    color: colors.light.warning,
+    backgroundColor: c.goldSoft,
+    color: c.warning,
     fontSize: 13,
     fontWeight: "700",
     paddingHorizontal: spacing.md,
@@ -234,13 +238,13 @@ const styles = StyleSheet.create({
     gap: spacing.xl
   },
   metricLabel: {
-    color: colors.light.textSecondary,
+    color: c.textSecondary,
     fontSize: 13,
     fontWeight: "700",
     textTransform: "uppercase"
   },
   metricValue: {
-    color: colors.light.textPrimary,
+    color: c.textPrimary,
     fontSize: 24,
     fontWeight: "700",
     fontVariant: ["tabular-nums"]
@@ -250,7 +254,7 @@ const styles = StyleSheet.create({
   },
   participantRow: {
     gap: spacing.sm,
-    borderBottomColor: colors.light.borderSoft,
+    borderBottomColor: c.borderSoft,
     borderBottomWidth: 1,
     paddingBottom: spacing.md
   },
@@ -261,12 +265,12 @@ const styles = StyleSheet.create({
     gap: spacing.md
   },
   participantName: {
-    color: colors.light.textPrimary,
+    color: c.textPrimary,
     fontSize: 16,
     fontWeight: "700"
   },
   participantAmount: {
-    color: colors.light.textPrimary,
+    color: c.textPrimary,
     fontSize: 15,
     fontWeight: "700",
     fontVariant: ["tabular-nums"]
@@ -275,58 +279,59 @@ const styles = StyleSheet.create({
     height: 8,
     overflow: "hidden",
     borderRadius: radius.full,
-    backgroundColor: colors.light.primarySoft
+    backgroundColor: c.primarySoft
   },
   fill: {
     height: "100%",
     borderRadius: radius.full,
-    backgroundColor: colors.light.primary
+    backgroundColor: c.primary
   },
   primaryButton: {
     alignItems: "center",
     borderRadius: radius.md,
-    backgroundColor: colors.light.accent,
+    backgroundColor: c.accent,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.md
   },
   primaryButtonText: {
-    color: colors.light.surfaceRaised,
+    color: c.surfaceRaised,
     fontSize: 15,
     fontWeight: "700"
   },
   secondaryButton: {
     alignItems: "center",
     borderRadius: radius.md,
-    borderColor: colors.light.borderStrong,
+    borderColor: c.borderStrong,
     borderWidth: 1,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.md
   },
   secondaryButtonText: {
-    color: colors.light.textPrimary,
+    color: c.textPrimary,
     fontSize: 15,
     fontWeight: "700"
   },
   destinationReady: {
     borderRadius: radius.sm,
-    backgroundColor: colors.light.accentSoft,
+    backgroundColor: c.accentSoft,
     padding: spacing.md
   },
   destinationDraft: {
     borderRadius: radius.sm,
-    backgroundColor: colors.light.goldSoft,
+    backgroundColor: c.goldSoft,
     padding: spacing.md
   },
   readyCopy: {
-    color: colors.light.accentStrong,
+    color: c.accentStrong,
     fontSize: 14,
     fontWeight: "700",
     lineHeight: 20
   },
   warningCopy: {
-    color: colors.light.warning,
+    color: c.warning,
     fontSize: 14,
     fontWeight: "700",
     lineHeight: 20
   }
 });
+}
